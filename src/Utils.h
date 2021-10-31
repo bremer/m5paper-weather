@@ -133,6 +133,12 @@ String getHourString(time_t rawtime)
    return (String) buff;
 }
 
+/* Convert from m/s to km/h */
+float toKmh(float ms)
+{
+   return ms * 3.6;
+}
+
 /* Convert the minute of the time_t */
 String getHourMinString(time_t rawtime)
 {

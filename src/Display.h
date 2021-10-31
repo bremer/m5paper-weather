@@ -163,13 +163,17 @@ void WeatherDisplay::DrawOutdoorInfo(int x, int y, int dx, int dy)
    canvas.drawCentreString("Aussen", x + dx / 2, y + 7, 1);
    canvas.drawLine(x, y + 35, x + dx, y + 35, M5EPD_Canvas::G15);
 
-   canvas.drawString("Wind " + String(myData.weather.windspeed, 1) + " m/s", x + 10, y + 55, 1);
+   canvas.drawString("Wind " + String(toKmh(myData.weather.windspeed), 0) + " km/h", x + 10, y + 45, 1);
 
    DrawIcon(x + 25, y + 85, (uint16_t *)TEMPERATURE64x64);
-   canvas.drawString(" C", x + 105, y + 110, 1);
+   canvas.drawString(String(myData.weather.temp, 0) + " C", x + 105, y + 110, 1);
+   canvas.setTextSize(2);
+   canvas.drawString("gefuehlt " + String(myData.weather.tempFeelsLike, 0) + " C", x + 25, y + 150, 1);
+    
 
-   DrawIcon(x + 25, y + 175, (uint16_t *)HUMIDITY64x64);
-   canvas.drawString("%", x + 105, y + 200, 1);
+   canvas.setTextSize(3);
+   DrawIcon(x + 25, y + 180, (uint16_t *)HUMIDITY64x64);
+   canvas.drawString(String(myData.weather.humidity, 0) + "%", x + 105, y + 205, 1);
 }
 
 /* Indoor temp and hum */
@@ -180,11 +184,11 @@ void WeatherDisplay::DrawIndoorInfo(int x, int y, int dx, int dy)
    canvas.drawLine(x, y + 35, x + dx, y + 35, M5EPD_Canvas::G15);
 
    canvas.setTextSize(3);
-   DrawIcon(x + 25, y + 55, (uint16_t *)TEMPERATURE64x64);
-   canvas.drawString(String(myData.sht30Temperatur) + " C", x + 105, y + 80, 1);
+   DrawIcon(x + 25, y + 85, (uint16_t *)TEMPERATURE64x64);
+   canvas.drawString(String(myData.sht30Temperatur) + " C", x + 105, y + 110, 1);
 
-   DrawIcon(x + 25, y + 150, (uint16_t *)HUMIDITY64x64);
-   canvas.drawString(String(myData.sht30Humidity) + "%", x + 105, y + 175, 1);
+   DrawIcon(x + 25, y + 180, (uint16_t *)HUMIDITY64x64);
+   canvas.drawString(String(myData.sht30Humidity) + "%", x + 105, y + 205, 1);
 }
 
 void WeatherDisplay::DrawStatusInfo(int x, int y, int dx, int dy)
@@ -194,8 +198,8 @@ void WeatherDisplay::DrawStatusInfo(int x, int y, int dx, int dy)
    canvas.drawLine(x, y + 35, x + dx, y + 35, M5EPD_Canvas::G15);
 
    canvas.setTextSize(3);
-   canvas.drawCentreString(getRTCDateString(), x + dx / 2, y + 55, 1);
-   canvas.drawCentreString(getRTCTimeString(), x + dx / 2, y + 95, 1);
+   canvas.drawCentreString(getRTCDateString(), x + dx / 2, y + 100, 1);
+   canvas.drawCentreString(getRTCTimeString(), x + dx / 2, y + 140, 1);
    canvas.setTextSize(2);
    canvas.drawCentreString("updated", x + dx / 2, y + 120, 1);
 }
@@ -338,6 +342,7 @@ void WeatherDisplay::Show()
    // x = 960 y = 540
    // 540 - oben 35 - unten 10 = 495
 
+   // top
    canvas.drawRect(14, 34, maxX - 28, maxY - 43, M5EPD_Canvas::G15);
 
    canvas.drawRect(15, 35, maxX - 30, 251, M5EPD_Canvas::G15);

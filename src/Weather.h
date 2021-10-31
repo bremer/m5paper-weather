@@ -42,6 +42,9 @@ public:
    time_t sunrise;                         //!< Sunrise timestamp
    time_t sunset;                          //!< Sunset timestamp
    float  windspeed;                       //!< Wind speed
+   float  temp;                       
+   float  tempFeelsLike;              
+   float  humidity;                   
 
    time_t dailyTime[MAX_HOURLY];          //!< timestamp of the hourly forecast
    float  dailyMaxTemp[MAX_HOURLY];       //!< max temperature forecast
@@ -111,6 +114,9 @@ protected:
       sunrise           = LocalTime(root["current"]["sunrise"].as<int>());
       sunset            = LocalTime(root["current"]["sunset"].as<int>());
       windspeed         = root["current"]["wind_speed"].as<float>();
+      temp              = root["current"]["temp"].as<float>();
+      tempFeelsLike     = root["current"]["feels_like"].as<float>();
+      humidity          = root["current"]["humidity"].as<float>();
 
       JsonArray daily_list = root["daily"];
       for (int i = 0; i < MAX_FORECAST_DAILY; i++) {
@@ -147,6 +153,9 @@ public:
       , sunrise(0)
       , sunset(0)
       , windspeed(0)
+      , temp(0)
+      , tempFeelsLike(0)
+      , humidity(0)
       , maxRain(MIN_RAIN)
    {
       Clear();
@@ -160,6 +169,9 @@ public:
       sunrise           = 0;
       sunset            = 0;
       windspeed         = 0;
+      temp              = 0;
+      tempFeelsLike     = 0;
+      humidity          = 0;
       maxRain           = MIN_RAIN;
       memset(dailyMaxTemp,    0, sizeof(dailyMaxTemp));
       memset(forecastHourlyTemp,  0, sizeof(forecastHourlyTemp));
