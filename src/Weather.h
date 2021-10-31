@@ -40,7 +40,6 @@ public:
 
    time_t sunrise;                         //!< Sunrise timestamp
    time_t sunset;                          //!< Sunset timestamp
-   float  winddir;                         //!< Wind direction
    float  windspeed;                       //!< Wind speed
 
    time_t dailyTime[MAX_HOURLY];          //!< timestamp of the hourly forecast
@@ -113,7 +112,6 @@ protected:
 
       sunrise           = LocalTime(root["current"]["sunrise"].as<int>());
       sunset            = LocalTime(root["current"]["sunset"].as<int>());
-      winddir           = root["current"]["wind_deg"].as<float>();
       windspeed         = root["current"]["wind_speed"].as<float>();
 
       JsonArray daily_list = root["daily"];
@@ -145,7 +143,6 @@ public:
       , currentTimeOffset(0)
       , sunrise(0)
       , sunset(0)
-      , winddir(0)
       , windspeed(0)
       , maxRain(MIN_RAIN)
    {
@@ -159,7 +156,6 @@ public:
       currentTimeOffset = 0;
       sunrise           = 0;
       sunset            = 0;
-      winddir           = 0;
       windspeed         = 0;
       maxRain           = MIN_RAIN;
       memset(dailyMaxTemp,    0, sizeof(dailyMaxTemp));

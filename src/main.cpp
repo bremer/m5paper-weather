@@ -29,7 +29,6 @@
 #include "Battery.h"
 #include "EPD.h"
 #include "EPDWifi.h"
-#include "Moon.h"
 #include "SHT30.h"
 #include "Utils.h"
 #include "Weather.h"
@@ -72,7 +71,6 @@ void setup()
    if (StartWiFi(myData.wifiRSSI)) {
       GetBatteryValues(myData);
       GetSHT30Values(myData);
-      GetMoonValues(myData);
       if (myData.weather.Get()) {
          SetRTCDateTime(myData);
       }
@@ -88,7 +86,6 @@ void setup()
       if (StartWiFi(myData.wifiRSSI)) {
          GetBatteryValues(myData);
          GetSHT30Values(myData);
-         GetMoonValues(myData);
          if (myData.weather.Get()) {
             SetRTCDateTime(myData);
          }

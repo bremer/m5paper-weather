@@ -196,16 +196,3 @@ int JulianDate(int d, int m, int y)
    return j;
 } 
 
-/* Normalize the moon phase with the julian date format
- * The moon phase calculation is part of the github project
- * https://github.com/G6EJD/ESP32-Revised-Weather-Display-42-E-Paper
- * See http://www.dsbird.org.uk
- * Copyright (c) David Bird
- */
-double NormalizedMoonPhase(int d, int m, int y) 
-{
-   int    j     = JulianDate(d, m, y);
-   double Phase = (j + 4.867) / 29.53059;
-   
-   return (Phase - (int) Phase);
-}
