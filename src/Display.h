@@ -349,6 +349,7 @@ void WeatherDisplay::Show()
    DrawIndoorInfo(465, 35, 232, 251);
    DrawStatusInfo(697, 35, 245, 251);
 
+   // middle bottom
    canvas.drawRect(15, 286, maxX - 30, 122, M5EPD_Canvas::G15);
    for (int x = 13, i = 0; i < 4; x += 113, i += 1)
    {
@@ -357,10 +358,13 @@ void WeatherDisplay::Show()
       canvas.drawLine(x + 113, 286, x + 113, 408, M5EPD_Canvas::G15);
    }
 
+   // bottom
    canvas.drawRect(15, 408, maxX - 30, 122, M5EPD_Canvas::G15);
-   DrawGraph(13, 408, 210, 115, "Temp. (C)", 0, 5, -10, 30, myData.weather.forecastMaxTemp);
-   DrawGraph(13, 408, 210, 115, "Temp. (C)", 0, 5, -10, 30, myData.weather.forecastMinTemp);
-   DrawGraph(240, 408, 210, 115, "Regen (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastRain);
+   canvas.setTextSize(1);
+   canvas.drawString("stuendlich", 20, 410);
+   DrawGraph(13, 415, 210, 115, "Temp. (C)", 0, 5, -10, 30, myData.weather.forecastHourlyTemp);
+   DrawGraph(240, 415, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
+   DrawGraph(240, 415, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);
    canvas.drawLine(465, 408, 465, 530, M5EPD_Canvas::G15);
    
    canvas.pushCanvas(0, 0, UPDATE_MODE_GC16);

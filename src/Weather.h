@@ -26,7 +26,8 @@
 #include "Utils.h"
 
 #define MAX_HOURLY   24
-#define MAX_FORECAST  8
+#define MAX_FORECAST_DAILY  5
+#define MAX_FORECAST_HORLY  7
 #define MIN_RAIN     10
 
 /**
@@ -47,13 +48,10 @@ public:
    String dailyMain[MAX_HOURLY];          //!< description of the hourly forecast
    String dailyIcon[MAX_HOURLY];          //!< openweathermap icon of the forecast weather
 
-   int    maxRain;                         //!< maximum rain in mm of the day forecast
-   float  forecastMaxTemp[MAX_FORECAST];   //!< max temperature
-   float  forecastMinTemp[MAX_FORECAST];   //!< min temperature
-   float  forecastRain[MAX_FORECAST];      //!< max rain in mm
-   float  forecastHumidity[MAX_FORECAST];  //!< humidity of the dayly forecast
-   float  forecastWind[MAX_FORECAST];  //!< wind
-   float  forecastWindGust[MAX_FORECAST];  //!< wind gusts
+   int    maxRain;                         //!< maximum rain in mm of the hourly forecast
+   float  forecastHourlyTemp[MAX_FORECAST_HORLY];   //!< hourly temperature
+   float  forecastHourlyRain[MAX_FORECAST_HORLY];      //!< rain in mm/h
+   float  forecastHourlySnow[MAX_FORECAST_HORLY];      //!< rain in mm/h
 
 protected:
    /* Convert UTC time to local time */
@@ -72,7 +70,7 @@ protected:
       uri += "/data/2.5/onecall";
       uri += "?lat=" + String((float) LATITUDE, 5);
       uri += "&lon=" + String((float) LONGITUDE, 5);
-      uri += "&units=metric&lang=en&exclude=minutely";
+      uri += "&units=metric&lang=de&exclude=minutely";
       uri += "&appid=" + (String) OPENWEATHER_API;
 
       Serial.printf("Requesting %s to %s:%d\n", uri.c_str(), OPENWEATHER_SRV, OPENWEATHER_PORT);
@@ -115,25 +113,30 @@ protected:
       windspeed         = root["current"]["wind_speed"].as<float>();
 
       JsonArray daily_list = root["daily"];
-      for (int i = 0; i < MAX_FORECAST; i++) {
+      for (int i = 0; i < MAX_FORECAST_DAILY; i++) {
          if (i < daily_list.size()) {
             dailyTime[i]    = LocalTime(daily_list[i]["dt"].as<int>());
             dailyMaxTemp[i] = daily_list[i]["temp"]["max"].as<float>();
             dailyMain[i]    = daily_list[i]["weather"][0]["main"].as<char *>();
             dailyIcon[i]    = daily_list[i]["weather"][0]["icon"].as<char *>();
-
-            forecastMaxTemp[i]  = daily_list[i]["temp"]["max"].as<float>();
-            forecastMinTemp[i]  = daily_list[i]["temp"]["min"].as<float>();
-            forecastRain[i]     = daily_list[i]["rain"].as<float>();
-            forecastHumidity[i] = daily_list[i]["humidity"].as<float>();
-            forecastWind[i] = daily_list[i]["wind_speed"].as<float>();
-            forecastWindGust[i] = daily_list[i]["wind_gust"].as<float>();
-            if (forecastRain[i] > maxRain) {
-               maxRain = forecastRain[i];
-            }
          }
       }
-          
+
+      JsonArray hourly_list = root["hourly"];
+      for (int i = 0; i < MAX_FORECAST_HORLY; i++) {
+         if (i < hourly_list.size()) {
+            forecastHourlyTemp[i]  = hourly_list[i]["temp"].as<float>();
+            forecastHourlyRain[i]     = hourly_list[i]["rain"]["1h"].as<float>();
+            if (forecastHourlyRain[i] > maxRain) {
+               maxRain = forecastHourlyRain[i];
+            }
+            forecastHourlySnow[i]     = hourly_list[i]["snow"]["1h"].as<float>();
+            if (forecastHourlySnow[i] > maxRain) {
+               maxRain = forecastHourlySnow[i];
+            }
+         }
+      } 
+
       return true;
    }
 
@@ -159,12 +162,9 @@ public:
       windspeed         = 0;
       maxRain           = MIN_RAIN;
       memset(dailyMaxTemp,    0, sizeof(dailyMaxTemp));
-      memset(forecastMaxTemp,  0, sizeof(forecastMaxTemp));
-      memset(forecastMinTemp,  0, sizeof(forecastMinTemp));
-      memset(forecastRain,     0, sizeof(forecastRain));
-      memset(forecastHumidity, 0, sizeof(forecastHumidity));
-      memset(forecastWind, 0, sizeof(forecastWind));
-      memset(forecastWindGust, 0, sizeof(forecastWindGust));
+      memset(forecastHourlyTemp,  0, sizeof(forecastHourlyTemp));
+      memset(forecastHourlyRain,     0, sizeof(forecastHourlyRain));
+      memset(forecastHourlySnow,     0, sizeof(forecastHourlySnow));
    }
 
    /* Start the request and the filling. */
