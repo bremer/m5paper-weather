@@ -32,11 +32,13 @@
 #include "SHT30.h"
 #include "Utils.h"
 #include "Weather.h"
+#include "Astronaut.h"
 
 // Refresh the M5Paper info more often.
 // #define REFRESH_PARTLY 1
 
 MyData         myData;            // The collection of the global data
+Astronaut      astronaut;         // RESt client for artonauts
 WeatherDisplay myDisplay(myData); // The global display helper class
 
 bool SetRTCDateTime(MyData &myData)
@@ -71,6 +73,7 @@ void setup()
    if (StartWiFi(myData.wifiRSSI)) {
       GetBatteryValues(myData);
       GetSHT30Values(myData);
+      astronaut.GetAstronauts(myData);
       if (myData.weather.Get()) {
          SetRTCDateTime(myData);
       }
@@ -78,7 +81,11 @@ void setup()
       myDisplay.Show();
       StopWiFi();
    }
-   ShutdownEPD(60 * 60); // every 1 hour
+   int sleep_interval; // in minutes
+   // TODO
+   // sleep_interval = (hour < 5) ? 90 : 30;
+   sleep_interval = 30;
+   ShutdownEPD(sleep_interval * 60);
 #else 
    myData.LoadNVS();
    if (myData.nvsCounter == 1) {

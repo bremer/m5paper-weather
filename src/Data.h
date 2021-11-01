@@ -39,6 +39,8 @@ public:
    int     sht30Temperatur;  //!< SHT30 temperature
    int     sht30Humidity;    //!< SHT30 humidity
 
+   int     astronauts;       // astronauts in space
+
    Weather weather;          //!< All the openweathermap data
 
 public:
@@ -48,6 +50,7 @@ public:
       , batteryCapacity(0)
       , sht30Temperatur(0)
       , sht30Humidity(0)
+      , astronauts(0)
    {
    }
 
@@ -63,6 +66,7 @@ public:
       Serial.println("BatteryCapacity: " + String(batteryCapacity));
       Serial.println("Sht30Temperatur: " + String(sht30Temperatur));
       Serial.println("Sht30Humidity: "   + String(sht30Humidity));
+      Serial.println("Astronauts: "      + String(astronauts));
       
       Serial.println("Sunrise: "         + getDateTimeString(weather.sunrise));
       Serial.println("Sunset: "          + getDateTimeString(weather.sunset));
