@@ -144,7 +144,7 @@ void WeatherDisplay::DrawIcon(int x, int y, const uint16_t *icon, int dx /*= 64*
 void WeatherDisplay::DrawSunInfo(int x, int y, int dx, int dy)
 {
    canvas.setTextSize(3);
-   canvas.drawCentreString("", x + dx / 2, y + 7, 1); // Sun headline
+   canvas.drawCentreString("Astro", x + dx / 2, y + 7, 1); 
    canvas.drawLine(x, y + 35, x + dx, y + 35, M5EPD_Canvas::G15);
 
    canvas.setTextSize(3);
@@ -182,8 +182,8 @@ void WeatherDisplay::DrawIndoorInfo(int x, int y, int dx, int dy)
    canvas.drawCentreString("Innen", x + dx / 2, y + 7, 1);
    canvas.drawLine(x, y + 35, x + dx, y + 35, M5EPD_Canvas::G15);
 
-   canvas.setTextSize(3);
    DrawIcon(x + 25, y + 85, (uint16_t *)TEMPERATURE64x64);
+   canvas.setTextSize(3);
    canvas.drawString(String(myData.sht30Temperatur) + " C", x + 105, y + 110, 1);
 
    DrawIcon(x + 25, y + 180, (uint16_t *)HUMIDITY64x64);
@@ -197,8 +197,8 @@ void WeatherDisplay::DrawStatusInfo(int x, int y, int dx, int dy)
    canvas.drawLine(x, y + 35, x + dx, y + 35, M5EPD_Canvas::G15);
 
    canvas.setTextSize(3);
-   canvas.drawCentreString(getRTCDateString(), x + dx / 2, y + 100, 1);
-   canvas.drawCentreString(getRTCTimeString(), x + dx / 2, y + 140, 1);
+   canvas.drawCentreString(getRTCDateString(), x + dx / 2, y + 95, 1);
+   canvas.drawCentreString(getRTCTimeString(), x + dx / 2, y + 143, 1);
    canvas.setTextSize(2);
    canvas.drawCentreString("updated", x + dx / 2, y + 120, 1);
 }

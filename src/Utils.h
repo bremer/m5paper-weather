@@ -68,7 +68,7 @@ String getRTCDateString()
    
    M5.RTC.getDate(&date_struct);
 
-   sprintf(buff,"%02d.%02d.%04d",
+   sprintf(buff,"%d.%d.%04d",
       date_struct.day,  date_struct.mon, date_struct.year);
 
    return (String) buff;
@@ -82,7 +82,7 @@ String getRTCTimeString()
    
    M5.RTC.getTime(&time_struct);
 
-   sprintf(buff,"%02d:%02d:%02d",      
+   sprintf(buff,"%d:%02d:%02d",      
       time_struct.hour, time_struct.min, time_struct.sec);
 
    return (String) buff;
@@ -144,8 +144,7 @@ String getHourMinString(time_t rawtime)
 {
    char buff[32];
    
-   sprintf(buff,"%02d:%02d",
-      hour(rawtime), minute(rawtime));
+   sprintf(buff,"%d:%02d", hour(rawtime), minute(rawtime));
 
    return (String) buff;
 }
