@@ -34,9 +34,6 @@
 #include "Weather.h"
 #include "Astronaut.h"
 
-// Refresh the M5Paper info more often.
-// #define REFRESH_PARTLY 1
-
 MyData         myData;            // The collection of the global data
 Astronaut      astronaut;         // RESt client for artonauts
 WeatherDisplay myDisplay(myData); // The global display helper class
@@ -65,11 +62,22 @@ bool SetRTCDateTime(MyData &myData)
    return false;
 }
 
+void shutdown() 
+{
+   rtc_time_t RTCtime;
+   M5.RTC.getTime(&RTCtime);
+   int hour = RTCtime.hour;
+
+   int sleep_interval; // in minutes
+   sleep_interval = (hour < 5) ? 90 : 30;
+   
+   ShutdownEPD(sleep_interval * 60);
+}
+
 /* Start and M5Paper instance */
 void setup()
 {
-#ifndef REFRESH_PARTLY
-   InitEPD(true);
+   InitEPD(false);
    if (StartWiFi(myData.wifiRSSI)) {
       GetBatteryValues(myData);
       GetSHT30Values(myData);
@@ -77,41 +85,15 @@ void setup()
       if (myData.weather.Get()) {
          SetRTCDateTime(myData);
       }
+
+      M5.EPD.Clear(true);
       myData.Dump();
       myDisplay.Show();
       StopWiFi();
+
    }
-   int sleep_interval; // in minutes
-   // TODO
-   // sleep_interval = (hour < 5) ? 90 : 30;
-   sleep_interval = 30;
-   ShutdownEPD(sleep_interval * 60);
-#else 
-   myData.LoadNVS();
-   if (myData.nvsCounter == 1) {
-      InitEPD(true);
-      if (StartWiFi(myData.wifiRSSI)) {
-         GetBatteryValues(myData);
-         GetSHT30Values(myData);
-         if (myData.weather.Get()) {
-            SetRTCDateTime(myData);
-         }
-         myData.Dump();
-         myDisplay.Show();
-         StopWiFi();
-      }
-   } else {
-      InitEPD(false);
-      GetSHT30Values(myData);
-      myDisplay.ShowM5PaperInfo();
-      if (myData.nvsCounter >= 60) {
-         myData.nvsCounter = 0;
-      }
-   }
-   myData.nvsCounter++;
-   myData.SaveNVS();
-   ShutdownEPD(60); // 1 minute
-#endif // REFRESH_PARTLY   
+
+   shutdown();
 }
 
 /* Main loop. Never reached because of shutdown */

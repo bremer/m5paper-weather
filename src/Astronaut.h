@@ -43,7 +43,7 @@ protected:
       port = 80;
       uri += "/astros.json";
 
-      Serial.printf("Requesting %s to %s:%d\n", uri.c_str(), server, String(port));
+      Serial.printf("Requesting %s to %s\n", uri.c_str(), server.c_str());
 
       client.stop();
       http.begin(client, server, port, uri);
