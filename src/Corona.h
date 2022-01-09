@@ -23,22 +23,53 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include "Data.h"
+#include <Config.h>
 
 class Corona
 {
 protected:
-   const char *uri = "https://api.corona-zahlen.org/states/HB";
+   const String district = CORONA_AGS;
+   const String server = "https://api.corona-zahlen.org";
+   const String uri_district = "/districts/" + district;
+   const String uri_germany = "/germany";
 
-   bool GetCoronaJsonDoc(DynamicJsonDocument &doc)
+   bool GetCoronaLocalJsonDoc(DynamicJsonDocument &doc)
    {
       HTTPClient http;
 
-      Serial.printf("Requesting %s\n", uri);
-      http.begin("https://api.corona-zahlen.org/states/HB");
+      String uri = server + uri_district;
+      Serial.printf("Requesting %s\n", uri.c_str());
+      http.begin(uri);
       int httpCode = http.GET();
 
       if (httpCode != HTTP_CODE_OK) {
-         Serial.printf("Error on requesting %s: %s\n", uri, http.errorToString(httpCode).c_str());
+         Serial.printf("Error on requesting %s: %s\n", uri.c_str(), http.errorToString(httpCode).c_str());
+         http.end();
+         return false;
+      } else {
+         DeserializationError error = deserializeJson(doc, http.getStream());
+         http.end();
+         if (error) {
+            Serial.printf("deserializeJson() failed: %s", error.c_str());
+            return false;
+         } else {
+            return true;
+         }
+      }
+
+   }
+
+   bool GetCoronaGermanyJsonDoc(DynamicJsonDocument &doc)
+   {
+      HTTPClient http;
+
+      String uri = server + uri_germany;
+      Serial.printf("Requesting %s\n", uri.c_str());
+      http.begin(uri);
+      int httpCode = http.GET();
+
+      if (httpCode != HTTP_CODE_OK) {
+         Serial.printf("Error on requesting %s: %s\n", uri.c_str(), http.errorToString(httpCode).c_str());
          http.end();
          return false;
       } else {
@@ -64,12 +95,15 @@ public:
    {
       DynamicJsonDocument doc(5 * 1024);
 
-      if (GetCoronaJsonDoc(doc))
+      if (GetCoronaLocalJsonDoc(doc))
       {
-         Serial.printf("Corona name: %s", doc.as<JsonObject>()["data"]["HB"]["name"].as<String>().c_str());
-         myData.coronaWeekIncidenceHb = doc.as<JsonObject>()["data"]["HB"]["weekIncidence"].as<float>();
-         myData.coronaName = doc.as<JsonObject>()["data"]["HB"]["name"].as<char *>();
+         myData.coronaWeekIncidenceLocal = doc.as<JsonObject>()["data"][district]["weekIncidence"].as<float>();
+         myData.coronaName = doc.as<JsonObject>()["data"][district]["name"].as<char *>();
          myData.coronaUpdated = doc.as<JsonObject>()["meta"]["lastUpdate"].as<char *>();
+      }
+      if (GetCoronaGermanyJsonDoc(doc))
+      {
+         myData.coronaWeekIncidenceGermany = doc.as<JsonObject>()["weekIncidence"].as<float>();
          return true;
       }
       return false;

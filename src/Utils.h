@@ -201,3 +201,14 @@ int JulianDate(int d, int m, int y)
    return j;
 } 
 
+/* Converts yyyy-mm-dd to dd.mm.yyyy
+*/
+String GermanDate(String intDateString)
+{
+   if(intDateString.length() >= 10)
+   {
+      const String separator = ".";
+      return intDateString.substring(8,10) + separator + intDateString.substring(5,7) + separator + intDateString.substring(0,4);
+   }
+   return intDateString;
+}

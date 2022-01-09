@@ -274,12 +274,17 @@ void WeatherDisplay::DrawTraffic(int x, int y, int dx, int dy)
 void WeatherDisplay::DrawCorona(int x, int y, int dx, int dy)
 {
    canvas.setTextSize(2);
-   canvas.drawCentreString("Corona  " + String(myData.coronaUpdated).substring(0, 10), x + dx / 2, y + 5, 1);
+   canvas.drawCentreString("Corona  " + GermanDate(myData.coronaUpdated), x + dx / 2, y + 5, 1);
 
    canvas.setTextSize(2);
    canvas.drawString("Inzidenz " + String(myData.coronaName) + ":", x + 10, y + 40);
    canvas.setTextSize(3);
-   canvas.drawString(String(myData.coronaWeekIncidenceHb, 0), x + 250, y + 35);
+   canvas.drawString(String(myData.coronaWeekIncidenceLocal, 0), x + 240, y + 35);
+
+   canvas.setTextSize(2);
+   canvas.drawString("Inzidenz Dtl.:", x + 10, y + 80);
+   canvas.setTextSize(3);
+   canvas.drawString(String(myData.coronaWeekIncidenceGermany, 0), x + 240, y + 75);
 }
 
 /* Draw a graph with x- and y-axis and values */
@@ -391,6 +396,7 @@ void WeatherDisplay::Show()
    canvas.drawRect(15, 408, maxX - 30, 122, M5EPD_Canvas::G15);
    canvas.setTextSize(1);
    canvas.drawString("stuendlich", 20, 410);
+
    DrawGraph(15, 410, 210, 115, "Temp. (C)", 0, 5, myData.weather.minTemp, myData.weather.maxTemp, myData.weather.forecastHourlyTemp);
    DrawGraph(245, 410, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
    DrawGraph(245, 410, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);
