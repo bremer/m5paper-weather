@@ -41,6 +41,11 @@ public:
 
    int     astronauts;       // astronauts in space
 
+
+   float   coronaWeekIncidenceHb;  
+   String  coronaName;  
+   String  coronaUpdated;  
+
    Weather weather;          //!< All the openweathermap data
 
 public:
@@ -51,6 +56,7 @@ public:
       , sht30Temperatur(0)
       , sht30Humidity(0)
       , astronauts(0)
+      , coronaWeekIncidenceHb(0)
    {
    }
 
@@ -67,6 +73,8 @@ public:
       Serial.println("Sht30Temperatur: " + String(sht30Temperatur));
       Serial.println("Sht30Humidity: "   + String(sht30Humidity));
       Serial.println("Astronauts: "      + String(astronauts));
+
+      Serial.println("WeekIncidenceHb: "      + String(coronaWeekIncidenceHb));
       
       Serial.println("Sunrise: "         + getDateTimeString(weather.sunrise));
       Serial.println("Sunset: "          + getDateTimeString(weather.sunset));

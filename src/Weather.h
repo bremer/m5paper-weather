@@ -52,6 +52,8 @@ public:
    String dailyIcon[MAX_HOURLY];          //!< openweathermap icon of the forecast weather
 
    int    maxRain;                         //!< maximum rain in mm of the hourly forecast
+   int    maxTemp;                         //!< maximum temp in C of the hourly forecast
+   int    minTemp;                         //!< minimum temp in C of the hourly forecast
    float  forecastHourlyTemp[MAX_FORECAST_HORLY];   //!< hourly temperature
    float  forecastHourlyRain[MAX_FORECAST_HORLY];      //!< rain in mm/h
    float  forecastHourlySnow[MAX_FORECAST_HORLY];      //!< rain in mm/h
@@ -129,19 +131,29 @@ protected:
       }
 
       JsonArray hourly_list = root["hourly"];
+      maxRain = 1;
+      minTemp = 0;
+      maxTemp = 5;
       for (int i = 0; i < MAX_FORECAST_HORLY; i++) {
          if (i < hourly_list.size()) {
             forecastHourlyTemp[i]  = hourly_list[i]["temp"].as<float>();
+            if (forecastHourlyTemp[i] > maxTemp) {
+               maxTemp = forecastHourlyTemp[i] + 1;
+            }
+            if (forecastHourlyTemp[i] < minTemp) {
+               minTemp = forecastHourlyTemp[i] - 1;
+            }
             forecastHourlyRain[i]     = hourly_list[i]["rain"]["1h"].as<float>();
             if (forecastHourlyRain[i] > maxRain) {
-               maxRain = forecastHourlyRain[i];
+               maxRain = forecastHourlyRain[i] + 1;
             }
             forecastHourlySnow[i]     = hourly_list[i]["snow"]["1h"].as<float>();
             if (forecastHourlySnow[i] > maxRain) {
-               maxRain = forecastHourlySnow[i];
+               maxRain = forecastHourlySnow[i] + 1;
             }
          }
       } 
+      
 
       return true;
    }

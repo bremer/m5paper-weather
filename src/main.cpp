@@ -15,7 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
-  * @file Weather.h
+  * @file main.cpp
   * 
   * Main file with setup() and loop()
   */
@@ -33,9 +33,11 @@
 #include "Utils.h"
 #include "Weather.h"
 #include "Astronaut.h"
+#include "Corona.h"
 
 MyData         myData;            // The collection of the global data
-Astronaut      astronaut;         // RESt client for artonauts
+Astronaut      astronaut;         // REST client for astonauts
+Corona         corona;         // REST client for corona date
 WeatherDisplay myDisplay(myData); // The global display helper class
 
 bool SetRTCDateTime(MyData &myData)
@@ -82,6 +84,7 @@ void setup()
       GetBatteryValues(myData);
       GetSHT30Values(myData);
       astronaut.GetAstronauts(myData);
+      corona.GetCorona(myData);
       if (myData.weather.Get()) {
          SetRTCDateTime(myData);
       }
