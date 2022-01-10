@@ -2,10 +2,15 @@
 
 Modified version of M5PaperWeather: https://github.com/Bastelschlumpf/M5PaperWeather
 
-* Daily forecast instead of hourly
-* Wind and wind gusts instead of pressure
-* BTC/USD ticker
-* Ported to PlatformIO
+Features:
+
+* Local weather forecast
+* Astronauts currently in space 
+* Coraona virus incidence
 
 ## Getting Started
 > You need to rename `ConfigTemplate.h` to `Config.h` and put your own infos in there.
+
+## Screen Shot
+
+![ScreenShot](screenshot.jpeg)
