@@ -34,10 +34,12 @@
 #include "Weather.h"
 #include "Astronaut.h"
 #include "Corona.h"
+#include "Maps.h"
 
 MyData         myData;            // The collection of the global data
 Astronaut      astronaut;         // REST client for astonauts
 Corona         corona;         // REST client for corona date
+Maps           maps;             // google maps client
 WeatherDisplay myDisplay(myData); // The global display helper class
 
 bool SetRTCDateTime(MyData &myData)
@@ -68,10 +70,12 @@ void shutdown()
 {
    rtc_time_t RTCtime;
    M5.RTC.getTime(&RTCtime);
-   int hour = RTCtime.hour;
+   int8_t hour = RTCtime.hour;
+   int8_t minute = RTCtime.min;
 
-   int sleep_interval; // in minutes
-   sleep_interval = (hour < 5) ? 90 : 30;
+   // no refresh between 0:00 and 5:30 
+   // in minutes
+   int sleep_interval = (hour <= 5 && minute <= 30) ? (5 - hour) * 60 + (60 - minute) : 30;
    
    ShutdownEPD(sleep_interval * 60);
 }
@@ -85,6 +89,7 @@ void setup()
       GetSHT30Values(myData);
       astronaut.GetAstronauts(myData);
       corona.GetCorona(myData);
+      maps.GetMaps(myData);
       if (myData.weather.Get()) {
          SetRTCDateTime(myData);
       }

@@ -29,7 +29,9 @@ class Maps
 {
 protected:
    const String server = "https://maps.googleapis.com";
-   String uri_distance = "/maps/api/distancematrix/json?key=" + String(GOOGLE_API_KEY) + "&language=de&departure_time=now&origins=" + String(HOME_COORD) + "&destinations=" + String(WORK_COORD);
+   String uri_distance = "/maps/api/distancematrix/json?key=" + String(GOOGLE_API_KEY) 
+      + "&language=de&departure_time=now&origins=" + String(HOME_COORD) + "|" + String(WORK_COORD) 
+      + "&destinations="  + String(HOME_COORD) + "|" + String(WORK_COORD);
 
    bool GetMapsJsonDoc(DynamicJsonDocument &doc)
    {
@@ -71,8 +73,9 @@ public:
 
       if (GetMapsJsonDoc(doc))
       {
-         Serial.println("Maps status: " + String(doc.as<JsonObject>()["status"].as<char *>()));
-         myData.mapsDurationInTraffic = doc.as<JsonObject>()["rows"][0]["elements"][0]["duration_in_traffic"]["text"].as<char *>();
+         Serial.println("Maps status: " + String(doc.as<JsonObject>()["status"].as<const char *>()));
+         myData.mapsWorkDurationInTraffic = doc.as<JsonObject>()["rows"][0]["elements"][1]["duration_in_traffic"]["value"].as<int>() / 60;
+         myData.mapsHomeDurationInTraffic = doc.as<JsonObject>()["rows"][1]["elements"][0]["duration_in_traffic"]["value"].as<int>() / 60;
          return true;
       }
       return false;

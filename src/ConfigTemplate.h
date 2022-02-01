@@ -31,5 +31,10 @@
 // Allgemeiner Gemeindeschlüssel. e.g. Bremen 04011
 #define CORONA_AGS       "04011"
 
+#define GOOGLE_API_KEY   "YOUR_KEY"
+#define WORK_NAME        "Work" 
+#define WORK_COORD       "50.123456,9.123456" 
+#define HOME_COORD       "51.123456,8.123456"
+
 #define WIFI_SSID        "your wifi ssid"
 #define WIFI_PW          "your wifi password" 

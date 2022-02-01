@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2021 SFini
+   Copyright (C) 2021 SFini, mbremer
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ protected:
    void DrawStatusInfo(int x, int y, int dx, int dy);
 
    void DrawDaily(int x, int y, int dx, int dy, Weather &weather, int index);
+   void DrawWeatherGraph(int x, int y, int dx, int dy);
 
    void DrawTraffic(int x, int y, int dx, int dy);
    void DrawCorona(int x, int y, int dx, int dy);
@@ -267,8 +268,14 @@ void WeatherDisplay::DrawDaily(int x, int y, int dx, int dy, Weather &weather, i
 
 void WeatherDisplay::DrawTraffic(int x, int y, int dx, int dy)
 {
-   // canvas.setTextSize(2);
-   // canvas.drawCentreString(String(CITY_NAME) + " -> " + String(WORK_NAME), x + dx / 2, y + 10, 1);
+   canvas.setTextSize(2);
+   canvas.setTextSize(2);
+   canvas.drawCentreString("Fahrzeit", x + dx / 2, y + 10, 1);
+   canvas.drawString(String(CITY_NAME) + " -> " + String(WORK_NAME) + " in       Minuten", x + 10, y + 46);
+   canvas.drawString(String(WORK_NAME) + " -> " + String(CITY_NAME) + " in       Minuten", x + 10, y + 86);
+   canvas.setTextSize(3);
+   canvas.drawRightString(String(myData.mapsWorkDurationInTraffic), x + dx - 165, y + 40, 1);
+   canvas.drawRightString(String(myData.mapsHomeDurationInTraffic), x + dx - 165, y + 80, 1);
 }
 
 void WeatherDisplay::DrawCorona(int x, int y, int dx, int dy)
@@ -277,14 +284,28 @@ void WeatherDisplay::DrawCorona(int x, int y, int dx, int dy)
    canvas.drawCentreString("Corona  " + GermanDate(myData.coronaUpdated), x + dx / 2, y + 5, 1);
 
    canvas.setTextSize(2);
-   canvas.drawString("Inzidenz " + String(myData.coronaName) + ":", x + 10, y + 40);
-   canvas.setTextSize(3);
-   canvas.drawString(String(myData.coronaWeekIncidenceLocal, 0), x + 240, y + 35);
+   canvas.drawString("Inzidenz " + String(myData.coronaName) + ":", x + 10, y + 45);
+   canvas.drawString("Inzidenz Dtl.:", x + 10, y + 85);
+   canvas.setTextSize(4);
+   canvas.drawRightString(String(myData.coronaWeekIncidenceLocal, 0), x + 330, y + 35, 1);
+   canvas.drawRightString(String(myData.coronaWeekIncidenceGermany, 0), x + 330, y + 75, 1);
+}
 
-   canvas.setTextSize(2);
-   canvas.drawString("Inzidenz Dtl.:", x + 10, y + 80);
-   canvas.setTextSize(3);
-   canvas.drawString(String(myData.coronaWeekIncidenceGermany, 0), x + 240, y + 75);
+void WeatherDisplay::DrawWeatherGraph(int x, int y, int dx, int dy)
+{
+   canvas.setTextSize(1);
+   canvas.drawString("stuendlich", x + 5, y + 2);
+
+   rtc_time_t RTCtime;
+   M5.RTC.getTime(&RTCtime);
+   // int xMin = RTCtime.hour;
+   // int xMax = xMin + 5;
+   int xMin = 0;
+   int xMax = 5;
+   DrawGraph(x, y + 2, 210, 115, "Temp. (C)", xMin, xMax, myData.weather.minTemp, myData.weather.maxTemp, myData.weather.forecastHourlyTemp);
+   DrawGraph(x + 230, y + 2, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
+   DrawGraph(x + 230, y + 2, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);
+
 }
 
 /* Draw a graph with x- and y-axis and values */
@@ -308,7 +329,7 @@ void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, int x
    canvas.drawString(yMinString, x + 5, graphY + graphDY - 3);
    for (int i = 0; i <= (xMax - xMin); i++)
    {
-      canvas.drawString(String(i), graphX + i * xStep, graphY + graphDY + 5);
+      canvas.drawString(String(xMin + i), graphX + i * xStep, graphY + graphDY + 5);
    }
 
    canvas.drawRect(graphX, graphY, graphDX, graphDY, M5EPD_Canvas::G15);
@@ -394,12 +415,8 @@ void WeatherDisplay::Show()
 
    // bottom
    canvas.drawRect(15, 408, maxX - 30, 122, M5EPD_Canvas::G15);
-   canvas.setTextSize(1);
-   canvas.drawString("stuendlich", 20, 410);
+   DrawWeatherGraph(15, 408, 465, 122);
 
-   DrawGraph(15, 410, 210, 115, "Temp. (C)", 0, 5, myData.weather.minTemp, myData.weather.maxTemp, myData.weather.forecastHourlyTemp);
-   DrawGraph(245, 410, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
-   DrawGraph(245, 410, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);
    canvas.drawLine(465, 408, 465, 530, M5EPD_Canvas::G15);
    
    canvas.pushCanvas(0, 0, UPDATE_MODE_GC16);

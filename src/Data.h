@@ -47,6 +47,9 @@ public:
    String  coronaName;  
    String  coronaUpdated;  
 
+   int  mapsWorkDurationInTraffic;
+   int  mapsHomeDurationInTraffic;
+
    Weather weather;          //!< All the openweathermap data
 
 public:
@@ -59,6 +62,8 @@ public:
       , astronauts(0)
       , coronaWeekIncidenceGermany(0)
       , coronaWeekIncidenceLocal(0)
+      , mapsWorkDurationInTraffic(0)
+      , mapsHomeDurationInTraffic(0)
    {
    }
 
@@ -76,7 +81,9 @@ public:
       Serial.println("Sht30Humidity: "   + String(sht30Humidity));
       Serial.println("Astronauts: "      + String(astronauts));
 
-      Serial.println("WeekIncidenceHb: "      + String(coronaWeekIncidenceLocal));
+      Serial.println("WeekIncidenceHb: " + String(coronaWeekIncidenceLocal));
+      
+      Serial.println("Duration: "        + mapsWorkDurationInTraffic + String("/") + mapsHomeDurationInTraffic);
       
       Serial.println("Sunrise: "         + getDateTimeString(weather.sunrise));
       Serial.println("Sunset: "          + getDateTimeString(weather.sunset));
