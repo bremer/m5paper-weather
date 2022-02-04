@@ -52,6 +52,8 @@ public:
 
    Weather weather;          //!< All the openweathermap data
 
+   int sleepForMinutes;
+
 public:
    MyData()
       : wifiRSSI(0)
@@ -64,6 +66,7 @@ public:
       , coronaWeekIncidenceLocal(0)
       , mapsWorkDurationInTraffic(0)
       , mapsHomeDurationInTraffic(0)
+      , sleepForMinutes(0)
    {
    }
 

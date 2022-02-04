@@ -114,7 +114,7 @@ void WeatherDisplay::DrawBattery(int x, int y)
 /* Draw a the head */
 void WeatherDisplay::DrawHead()
 {
-   canvas.drawString(String(myData.astronauts) + " Astronauten", 20, 10); // top left corner
+   canvas.drawString("", 20, 10); // top left corner
    canvas.drawCentreString(CITY_NAME, maxX / 2, 10, 1);
    canvas.drawString(WifiGetRssiAsQuality(myData.wifiRSSI) + "%", maxX - 200, 10);
    DrawRSSI(maxX - 155, 25);
@@ -152,11 +152,14 @@ void WeatherDisplay::DrawSunInfo(int x, int y, int dx, int dy)
    canvas.drawLine(x, y + 35, x + dx, y + 35, M5EPD_Canvas::G15);
 
    canvas.setTextSize(3);
-   DrawIcon(x + 25, y + 55, (uint16_t *)SUNRISE64x64);
-   canvas.drawRightString(getHourMinString(myData.weather.sunrise), x + dx - 10, y + 80, 1);
+   DrawIcon(x + 25, y + 40, (uint16_t *)ASTRONAUT64x64);
+   canvas.drawRightString(String(myData.astronauts), x + dx - 50, y + 70, 1);
 
-   DrawIcon(x + 25, y + 150, (uint16_t *)SUNSET64x64);
-   canvas.drawRightString(getHourMinString(myData.weather.sunset), x + dx - 10, y + 175, 1);
+   DrawIcon(x + 25, y + 110, (uint16_t *)SUNRISE64x64);
+   canvas.drawRightString(getHourMinString(myData.weather.sunrise), x + dx - 10, y + 140, 1);
+
+   DrawIcon(x + 25, y + 180, (uint16_t *)SUNSET64x64);
+   canvas.drawRightString(getHourMinString(myData.weather.sunset), x + dx - 10, y + 210, 1);
 }
 
 /* Outdoor weather */
@@ -166,17 +169,19 @@ void WeatherDisplay::DrawOutdoorInfo(int x, int y, int dx, int dy)
    canvas.drawCentreString("Aussen", x + dx / 2, y + 7, 1);
    canvas.drawLine(x, y + 35, x + dx, y + 35, M5EPD_Canvas::G15);
 
-   canvas.drawString("Wind " + String(toKmh(myData.weather.windspeed), 0) + " km/h", x + 10, y + 45, 1);
-
+   DrawIcon(x + 25, y + 40, (uint16_t *)WIND64x64);
+   canvas.drawRightString(String(toKmh(myData.weather.windspeed), 0) + " km/h", x + dx - 10, y + 70, 1);
+   
    canvas.setTextSize(4);
-   DrawIcon(x + 25, y + 85, (uint16_t *)TEMPERATURE64x64);
-   canvas.drawString(String(myData.weather.temp, 0) + " C", x + 100, y + 100, 1);
-   canvas.setTextSize(2);
-   canvas.drawString("gefuehlt " + String(myData.weather.tempFeelsLike, 0) + " C", x + 30, y + 150, 1);
+   DrawIcon(x + 25, y + 110, (uint16_t *)TEMPERATURE64x64);
+   canvas.drawString(String(myData.weather.temp, 0) + " C", x + 100, y + 125, 1);
     
    canvas.setTextSize(4);
    DrawIcon(x + 25, y + 180, (uint16_t *)HUMIDITY64x64);
    canvas.drawString(String(myData.weather.humidity, 0) + " %", x + 100, y + 195, 1);
+
+   canvas.setTextSize(2);
+   canvas.drawString("gefuhlt " + String(myData.weather.tempFeelsLike, 0) + " C", x + 60, y + 165, 1);
 }
 
 /* Indoor temp and hum */
@@ -187,8 +192,8 @@ void WeatherDisplay::DrawIndoorInfo(int x, int y, int dx, int dy)
    canvas.drawLine(x, y + 35, x + dx, y + 35, M5EPD_Canvas::G15);
 
    canvas.setTextSize(4);
-   DrawIcon(x + 25, y + 85, (uint16_t *)TEMPERATURE64x64);
-   canvas.drawString(String(myData.sht30Temperatur) + " C", x + 100, y + 100, 1);
+   DrawIcon(x + 25, y + 110, (uint16_t *)TEMPERATURE64x64);
+   canvas.drawString(String(myData.sht30Temperatur) + " C", x + 100, y + 125, 1);
 
    DrawIcon(x + 25, y + 180, (uint16_t *)HUMIDITY64x64);
    canvas.drawString(String(myData.sht30Humidity) + " %", x + 100, y + 195, 1);
@@ -205,6 +210,8 @@ void WeatherDisplay::DrawStatusInfo(int x, int y, int dx, int dy)
    canvas.drawCentreString(getRTCTimeString(), x + dx / 2, y + 143, 1);
    canvas.setTextSize(2);
    canvas.drawCentreString("updated", x + dx / 2, y + 120, 1);
+   canvas.drawCentreString("next update ", x + dx / 2, y + 200, 1);
+   canvas.drawCentreString("in " + String(myData.sleepForMinutes) + " Min.", x + dx / 2, y + 220, 1);
 }
 
 /* Draw one hourly weather information */
@@ -298,18 +305,15 @@ void WeatherDisplay::DrawWeatherGraph(int x, int y, int dx, int dy)
 
    rtc_time_t RTCtime;
    M5.RTC.getTime(&RTCtime);
-   // int xMin = RTCtime.hour;
-   // int xMax = xMin + 5;
-   int xMin = 0;
-   int xMax = 5;
-   DrawGraph(x, y + 2, 210, 115, "Temp. (C)", xMin, xMax, myData.weather.minTemp, myData.weather.maxTemp, myData.weather.forecastHourlyTemp);
+   int xMin = RTCtime.hour;
+   int xSteps = 5;
+   DrawGraph(x, y + 2, 210, 115, "Temp. (C)", xMin, xSteps, myData.weather.minTemp, myData.weather.maxTemp, myData.weather.forecastHourlyTemp);
    DrawGraph(x + 230, y + 2, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
    DrawGraph(x + 230, y + 2, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);
-
 }
 
 /* Draw a graph with x- and y-axis and values */
-void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, int xMin, int xMax, int yMin, int yMax, float values[])
+void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, int xMin, int xSteps, int yMin, int yMax, float values[])
 {
    String yMinString = String(yMin);
    String yMaxString = String(yMax);
@@ -318,7 +322,7 @@ void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, int x
    int graphY = y + 35;
    int graphDX = dx - textWidth - 20;
    int graphDY = dy - 35 - 20;
-   float xStep = graphDX / (xMax - xMin);
+   float xStep = graphDX / xSteps;
    int iOldX = 0;
    int iOldY = 0;
 
@@ -327,8 +331,9 @@ void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, int x
    canvas.setTextSize(2);
    canvas.drawString(yMaxString, x + 5, graphY - 5);
    canvas.drawString(yMinString, x + 5, graphY + graphDY - 3);
-   for (int i = 0; i <= (xMax - xMin); i++)
+   for (int i = 0; i <= xSteps; i++)
    {
+      // x scale
       canvas.drawString(String(xMin + i), graphX + i * xStep, graphY + graphDY + 5);
    }
 
@@ -349,11 +354,11 @@ void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, int x
          canvas.drawLine(xDash, yPos, xDash + 5, yPos, M5EPD_Canvas::G15);
       }
    }
-   for (int i = xMin; i <= xMax; i++)
+   for (int i = 0; i <= xSteps; i++)
    {
-      float yValue = values[i - xMin];
+      float yValue = values[i];
       float yValueDY = (float)graphDY / (yMax - yMin);
-      int xPos = graphX + graphDX / (xMax - xMin) * i;
+      int xPos = graphX + graphDX / xSteps * i;
       int yPos = graphY + graphDY - (yValue - yMin) * yValueDY;
 
       if (yPos > graphY + graphDY)
@@ -362,7 +367,7 @@ void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, int x
          yPos = graphY;
 
       canvas.fillCircle(xPos, yPos, 2, M5EPD_Canvas::G15);
-      if (i > xMin)
+      if (i > 0)
       {
          canvas.drawLine(iOldX, iOldY, xPos, yPos, M5EPD_Canvas::G15);
       }
@@ -408,15 +413,13 @@ void WeatherDisplay::Show()
       canvas.drawLine(x + 113, 286, x + 113, 408, M5EPD_Canvas::G15);
    }
 
-   // middle bottom right
-   DrawTraffic(465, 286, 465, 122);
-   // bottom right
+   DrawWeatherGraph(465, 286, 465, 122);
+   
+   DrawTraffic(15, 408, 465, 122);
    DrawCorona(465, 415, 465, 122);
-
    // bottom
+   
    canvas.drawRect(15, 408, maxX - 30, 122, M5EPD_Canvas::G15);
-   DrawWeatherGraph(15, 408, 465, 122);
-
    canvas.drawLine(465, 408, 465, 530, M5EPD_Canvas::G15);
    
    canvas.pushCanvas(0, 0, UPDATE_MODE_GC16);

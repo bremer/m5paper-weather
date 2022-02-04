@@ -66,7 +66,7 @@ bool SetRTCDateTime(MyData &myData)
    return false;
 }
 
-void shutdown() 
+void getSleepTime(MyData &myData)
 {
    rtc_time_t RTCtime;
    M5.RTC.getTime(&RTCtime);
@@ -75,9 +75,12 @@ void shutdown()
 
    // no refresh between 0:00 and 5:30 
    // in minutes
-   int sleep_interval = (hour <= 5 && minute <= 30) ? (5 - hour) * 60 + (60 - minute) : 30;
-   
-   ShutdownEPD(sleep_interval * 60);
+   myData.sleepForMinutes = (hour <= 5 && minute <= 30) ? (5 - hour) * 60 + (60 - minute) : 30;
+}
+
+void shutdown(int sleepForMinutes) 
+{   
+   ShutdownEPD(sleepForMinutes * 60);
 }
 
 /* Start and M5Paper instance */
@@ -87,6 +90,7 @@ void setup()
    if (StartWiFi(myData.wifiRSSI)) {
       GetBatteryValues(myData);
       GetSHT30Values(myData);
+      getSleepTime(myData);
       astronaut.GetAstronauts(myData);
       corona.GetCorona(myData);
       maps.GetMaps(myData);
@@ -98,10 +102,9 @@ void setup()
       myData.Dump();
       myDisplay.Show();
       StopWiFi();
-
    }
 
-   shutdown();
+   shutdown(myData.sleepForMinutes);
 }
 
 /* Main loop. Never reached because of shutdown */
