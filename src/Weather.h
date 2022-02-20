@@ -27,7 +27,7 @@
 
 #define MAX_HOURLY   24
 #define MAX_FORECAST_DAILY  5
-#define MAX_FORECAST_HORLY  7
+#define MAX_FORECAST_HORLY  12
 #define MIN_RAIN     10
 
 /**

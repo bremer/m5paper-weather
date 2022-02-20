@@ -29,6 +29,9 @@ M5EPD_Canvas canvas(&M5.EPD); // Main canvas of the e-paper
 class WeatherDisplay
 {
 protected:
+   const boolean RIGHT = true;
+   const boolean LEFT = false;
+
    MyData &myData; //!< Reference to the global data
    int maxX;       //!< Max width of the e-paper
    int maxY;       //!< Max height of the e-paper
@@ -54,7 +57,7 @@ protected:
    void DrawTraffic(int x, int y, int dx, int dy);
    void DrawCorona(int x, int y, int dx, int dy);
 
-   void DrawGraph(int x, int y, int dx, int dy, String title, int xMin, int xMax, int yMin, int yMax, float values[]);
+   void DrawGraph(int x, int y, int dx, int dy, String title, boolean titleRight, int xMin, int xMax, int yMin, int yMax, float values[]);
 
 public:
    WeatherDisplay(MyData &md, int x = 960, int y = 540)
@@ -300,41 +303,56 @@ void WeatherDisplay::DrawCorona(int x, int y, int dx, int dy)
 
 void WeatherDisplay::DrawWeatherGraph(int x, int y, int dx, int dy)
 {
-   canvas.setTextSize(1);
-   canvas.drawString("stuendlich", x + 5, y + 2);
-
    rtc_time_t RTCtime;
    M5.RTC.getTime(&RTCtime);
    int xMin = RTCtime.hour;
-   int xSteps = 5;
-   DrawGraph(x, y + 2, 210, 115, "Temp. (C)", xMin, xSteps, myData.weather.minTemp, myData.weather.maxTemp, myData.weather.forecastHourlyTemp);
-   DrawGraph(x + 230, y + 2, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
-   DrawGraph(x + 230, y + 2, 210, 115, "Niederschlag (mm)", 0, 5, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);
+   int xSteps = 12;
+   DrawGraph(x + 15, y + 2, 410, 115, "N", RIGHT, xMin, xSteps, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
+   DrawGraph(x + 15, y + 2, 410, 115, "N", RIGHT, xMin, xSteps, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);
+   DrawGraph(x + 15, y + 2, 410, 115, "T", LEFT, xMin, xSteps, myData.weather.minTemp, myData.weather.maxTemp, myData.weather.forecastHourlyTemp);
 }
 
 /* Draw a graph with x- and y-axis and values */
-void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, int xMin, int xSteps, int yMin, int yMax, float values[])
+void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, boolean titleRight, int xMin, int xSteps, int yMin, int yMax, float values[])
 {
-   String yMinString = String(yMin);
-   String yMaxString = String(yMax);
-   int textWidth = 5 + max(yMinString.length() * 3.5, yMaxString.length() * 3.5);
-   int graphX = x + 5 + textWidth + 5;
-   int graphY = y + 35;
+   int textWidth = 12;
+   int graphX = x + textWidth + 20;
+   int graphY = y + 10;
    int graphDX = dx - textWidth - 20;
-   int graphDY = dy - 35 - 20;
+   int graphDY = dy - 30;
    float xStep = graphDX / xSteps;
    int iOldX = 0;
    int iOldY = 0;
 
+
+   // first characters of the title
    canvas.setTextSize(2);
-   canvas.drawCentreString(title, x + dx / 2, y + 10, 1);
+   for (uint8_t i = 0; i < min(title.length(), (uint)4); i++) {
+      if (titleRight) {
+         canvas.drawCentreString(String(title.charAt(i)), x + dx + 15, y + 30 + i*13, 1);       
+      } else {
+         canvas.drawCentreString(String(title.charAt(i)), x + 12, y + 30 + i*13, 1);       
+      }
+   } 
+   
+   // y scale min and max
    canvas.setTextSize(2);
-   canvas.drawString(yMaxString, x + 5, graphY - 5);
-   canvas.drawString(yMinString, x + 5, graphY + graphDY - 3);
-   for (int i = 0; i <= xSteps; i++)
-   {
-      // x scale
-      canvas.drawString(String(xMin + i), graphX + i * xStep, graphY + graphDY + 5);
+   String yMinString = String(yMin);
+   String yMaxString = String(yMax);
+   if (titleRight) {
+      canvas.drawString(yMaxString, x + graphDX + 38, graphY - 5);
+      canvas.drawString(yMinString, x + graphDX + 38, graphY + graphDY - 3);
+   } else {
+      canvas.drawString(yMaxString, x + 2, graphY - 5);
+      canvas.drawString(yMinString, x + 2, graphY + graphDY - 3);
+   }
+   
+   if (!titleRight) {
+      for (int i = 0; i <= xSteps; i++)
+      {
+         // x scale mod 24
+         canvas.drawString(String((xMin + i)%24), graphX + i * xStep - 10, graphY + graphDY + 5);
+      }
    }
 
    canvas.drawRect(graphX, graphY, graphDX, graphDY, M5EPD_Canvas::G15);
@@ -348,7 +366,11 @@ void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, int x
       if (yPos < graphY)
          yPos = graphY;
 
-      canvas.drawString("0", graphX - 20, yPos);
+      if (titleRight) {
+         canvas.drawString("0", graphX + graphDX + 26, yPos);
+      } else {
+         canvas.drawString("0", graphX - 20, yPos);
+      }
       for (int xDash = graphX; xDash < graphX + graphDX - 10; xDash += 10)
       {
          canvas.drawLine(xDash, yPos, xDash + 5, yPos, M5EPD_Canvas::G15);
@@ -358,16 +380,33 @@ void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, int x
    {
       float yValue = values[i];
       float yValueDY = (float)graphDY / (yMax - yMin);
+      int h = (yValue - yMin) * yValueDY;
       int xPos = graphX + graphDX / xSteps * i;
-      int yPos = graphY + graphDY - (yValue - yMin) * yValueDY;
+      int yPos = graphY + graphDY - h;
 
       if (yPos > graphY + graphDY)
          yPos = graphY + graphDY;
       if (yPos < graphY)
          yPos = graphY;
 
-      canvas.fillCircle(xPos, yPos, 2, M5EPD_Canvas::G15);
-      if (i > 0)
+      if (titleRight) {
+         // bar chart for right side data 
+         uint barWidth =  xStep;
+         uint xbar = xPos - barWidth/2;
+         if (i == 0) {
+            barWidth = barWidth / 2;
+            xbar = xPos;
+         } else if (i == xSteps) {
+            barWidth = barWidth / 2;
+            xbar = xPos - barWidth;
+         }
+
+         canvas.fillRect(xbar, yPos, barWidth, h, M5EPD_Canvas::G2);
+      } else {
+         canvas.fillCircle(xPos, yPos, 2, M5EPD_Canvas::G15);
+      }
+
+      if (!titleRight && i > 0)
       {
          canvas.drawLine(iOldX, iOldY, xPos, yPos, M5EPD_Canvas::G15);
       }
