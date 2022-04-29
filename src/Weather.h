@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2021 SFini
+   Copyright (C) 2021 SFini, mbremer
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,10 +25,9 @@
 #include <ArduinoJson.h>
 #include "Utils.h"
 
-#define MAX_HOURLY   24
-#define MAX_FORECAST_DAILY  5
-#define MAX_FORECAST_HORLY  12
-#define MIN_RAIN     10
+#define MAX_FORECAST_DAILY 5
+#define MAX_FORECAST_HORLY 25
+#define MIN_RAIN 10
 
 /**
   * Class for reading all the weather data from openweathermap.
@@ -36,6 +35,8 @@
 class Weather
 {
 public:
+   bool   success;                        // success of request
+
    time_t currentTime;                     //!< Current timestamp
    int    currentTimeOffset;               //!< Current timezone
 
@@ -46,10 +47,10 @@ public:
    float  tempFeelsLike;              
    float  humidity;                   
 
-   time_t dailyTime[MAX_HOURLY];          //!< timestamp of the hourly forecast
-   float  dailyMaxTemp[MAX_HOURLY];       //!< max temperature forecast
-   String dailyMain[MAX_HOURLY];          //!< description of the hourly forecast
-   String dailyIcon[MAX_HOURLY];          //!< openweathermap icon of the forecast weather
+   time_t dailyTime[MAX_FORECAST_DAILY];          //!< timestamp of the hourly forecast
+   float  dailyMaxTemp[MAX_FORECAST_DAILY];       //!< max temperature forecast
+   String dailyMain[MAX_FORECAST_DAILY];          //!< description of the hourly forecast
+   String dailyIcon[MAX_FORECAST_DAILY];          //!< openweathermap icon of the forecast weather
 
    int    maxRain;                         //!< maximum rain in mm of the hourly forecast
    int    maxTemp;                         //!< maximum temp in C of the hourly forecast
@@ -185,10 +186,10 @@ public:
       tempFeelsLike     = 0;
       humidity          = 0;
       maxRain           = MIN_RAIN;
-      memset(dailyMaxTemp,    0, sizeof(dailyMaxTemp));
-      memset(forecastHourlyTemp,  0, sizeof(forecastHourlyTemp));
-      memset(forecastHourlyRain,     0, sizeof(forecastHourlyRain));
-      memset(forecastHourlySnow,     0, sizeof(forecastHourlySnow));
+      memset(dailyMaxTemp,       0, sizeof(dailyMaxTemp));
+      memset(forecastHourlyTemp, 0, sizeof(forecastHourlyTemp));
+      memset(forecastHourlyRain, 0, sizeof(forecastHourlyRain));
+      memset(forecastHourlySnow, 0, sizeof(forecastHourlySnow));
    }
 
    /* Start the request and the filling. */
@@ -196,9 +197,9 @@ public:
    {
       DynamicJsonDocument doc(35 * 1024);
    
-      if (GetOpenWeatherJsonDoc(doc)) {
-         return Fill(doc.as<JsonObject>());
-      }
-      return false;
+      success = GetOpenWeatherJsonDoc(doc);
+      success = success && Fill(doc.as<JsonObject>());
+      
+      return success;
    }
 };

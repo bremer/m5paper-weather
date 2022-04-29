@@ -73,9 +73,14 @@ void getSleepTime(MyData &myData)
    int8_t hour = RTCtime.hour;
    int8_t minute = RTCtime.min;
 
-   // no refresh between 0:00 and 5:30 
-   // in minutes
-   myData.sleepForMinutes = (hour <= 5 && minute <= 30) ? (5 - hour) * 60 + (60 - minute) : 30;
+   if (!myData.weather.success) {
+      myData.sleepForMinutes = 2;
+   } else if (hour < 5) {
+      // less frequent update between 0:00 and 5:00 
+      myData.sleepForMinutes = min((5 - hour) * 60 - minute, 120);
+   } else {
+      myData.sleepForMinutes = 30;
+   }
 }
 
 void shutdown(int sleepForMinutes) 
@@ -90,7 +95,6 @@ void setup()
    if (StartWiFi(myData.wifiRSSI)) {
       GetBatteryValues(myData);
       GetSHT30Values(myData);
-      getSleepTime(myData);
       astronaut.GetAstronauts(myData);
       corona.GetCorona(myData);
       maps.GetMaps(myData);
@@ -98,6 +102,7 @@ void setup()
          SetRTCDateTime(myData);
       }
 
+      getSleepTime(myData);
       M5.EPD.Clear(true);
       myData.Dump();
       myDisplay.Show();

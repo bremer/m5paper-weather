@@ -66,7 +66,7 @@ public:
       , coronaWeekIncidenceLocal(0)
       , mapsWorkDurationInTraffic(0)
       , mapsHomeDurationInTraffic(0)
-      , sleepForMinutes(0)
+      , sleepForMinutes(60)
    {
    }
 
