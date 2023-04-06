@@ -55,7 +55,7 @@ protected:
    void DrawWeatherGraph(int x, int y, int dx, int dy);
 
    void DrawTraffic(int x, int y, int dx, int dy);
-   void DrawCorona(int x, int y, int dx, int dy);
+   void DrawLeague(int x, int y, int dx, int dy);
 
    void DrawGraph(int x, int y, int dx, int dy, String title, boolean titleRight, int xMin, int xMax, int yMin, int yMax, float values[]);
 
@@ -291,17 +291,13 @@ void WeatherDisplay::DrawTraffic(int x, int y, int dx, int dy)
    canvas.drawRightString(String(myData.mapsHomeDurationInTraffic), x + dx - 165, y + 80, 1);
 }
 
-void WeatherDisplay::DrawCorona(int x, int y, int dx, int dy)
+void WeatherDisplay::DrawLeague(int x, int y, int dx, int dy)
 {
    canvas.setTextSize(2);
-   canvas.drawCentreString("Corona  " + GermanDate(myData.coronaUpdated), x + dx / 2, y + 5, 1);
+   canvas.drawString(myData.leagueSpieltag, x + 10, y + 5, 1);
+   canvas.drawRightString(GermanDateFromTimestamp(myData.leagueNextTime) + " Uhr", x + dx - 10, y + 5, 1);
 
-   canvas.setTextSize(2);
-   canvas.drawString("Inzidenz " + String(myData.coronaName) + ":", x + 10, y + 45);
-   canvas.drawString("Inzidenz Dtl.:", x + 10, y + 85);
-   canvas.setTextSize(4);
-   canvas.drawRightString(String(myData.coronaWeekIncidenceLocal, 0), x + 330, y + 35, 1);
-   canvas.drawRightString(String(myData.coronaWeekIncidenceGermany, 0), x + 330, y + 75, 1);
+   canvas.drawString(myData.leagueNextTeam1 + " - " + myData.leagueNextTeam2, x + 10, y + 45);
 }
 
 void WeatherDisplay::DrawWeatherGraph(int x, int y, int dx, int dy)
@@ -456,7 +452,7 @@ void WeatherDisplay::Show()
    DrawWeatherGraph(465, 286, 465, 122);
    
    DrawTraffic(15, 408, 465, 122);
-   DrawCorona(465, 415, 465, 122);
+   DrawLeague(465, 415, 465, 122);
    // bottom
    
    canvas.drawRect(15, 408, maxX - 30, 122, M5EPD_Canvas::G15);

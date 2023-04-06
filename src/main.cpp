@@ -33,12 +33,12 @@
 #include "Utils.h"
 #include "Weather.h"
 #include "Astronaut.h"
-#include "Corona.h"
+#include "OpenLiga.h"
 #include "Maps.h"
 
 MyData         myData;            // The collection of the global data
 Astronaut      astronaut;         // REST client for astonauts
-Corona         corona;         // REST client for corona date
+OpenLiga       openLiga;         // REST client for OpenLiga
 Maps           maps;             // google maps client
 WeatherDisplay myDisplay(myData); // The global display helper class
 
@@ -96,7 +96,7 @@ void setup()
       GetBatteryValues(myData);
       GetSHT30Values(myData);
       astronaut.GetAstronauts(myData);
-      corona.GetCorona(myData);
+      openLiga.GetOpenLiga(myData);
       maps.GetMaps(myData);
       if (myData.weather.Get()) {
          SetRTCDateTime(myData);

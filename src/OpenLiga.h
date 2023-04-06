@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2021 Matthias Bremer
+   Copyright (C) 2023 Matthias Bremer
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
-  * @file Corona.h
+  * @file OpenLiga.h
   * 
-  * Class for reading Corona data.
+  * Class for reading Soccer data.
   */
 #pragma once
 #include <HTTPClient.h>
@@ -25,19 +25,18 @@
 #include "Data.h"
 #include <Config.h>
 
-class Corona
+class OpenLiga
 {
 protected:
-   const String district = CORONA_AGS;
-   const String server = "https://api.corona-zahlen.org";
-   const String uri_district = "/districts/" + district;
-   const String uri_germany = "/germany";
+   const String server = "https://api.openligadb.de";
+   const String pathNextMatch = "/getnextmatchbyleagueteam/" + String(LEAGUE_ID) + "/" + String(TEAM_ID);
+   const String pathSpieltag = "/getcurrentgroup/" + String(LEAGUE);
 
-   bool GetCoronaLocalJsonDoc(DynamicJsonDocument &doc)
+   bool GetNextMatchJsonDoc(DynamicJsonDocument &doc)
    {
       HTTPClient http;
 
-      String uri = server + uri_district;
+      String uri = server + pathNextMatch;
       Serial.printf("Requesting %s\n", uri.c_str());
       http.begin(uri);
       int httpCode = http.GET();
@@ -47,10 +46,12 @@ protected:
          http.end();
          return false;
       } else {
-         DeserializationError error = deserializeJson(doc, http.getStream());
+         String payload = http.getString();
+         DeserializationError error = deserializeJson(doc, payload);
          http.end();
          if (error) {
-            Serial.printf("deserializeJson() failed: %s", error.c_str());
+            Serial.printf("deserializeJson() failed. %s Code:%s\n", error.c_str(), String(error.code()));
+            Serial.printf("payload: %s\n", payload.c_str());
             return false;
          } else {
             return true;
@@ -59,11 +60,11 @@ protected:
 
    }
 
-   bool GetCoronaGermanyJsonDoc(DynamicJsonDocument &doc)
+   bool GetSpieltagJsonDoc(DynamicJsonDocument &doc)
    {
       HTTPClient http;
 
-      String uri = server + uri_germany;
+      String uri = server + pathSpieltag;
       Serial.printf("Requesting %s\n", uri.c_str());
       http.begin(uri);
       int httpCode = http.GET();
@@ -73,10 +74,12 @@ protected:
          http.end();
          return false;
       } else {
-         DeserializationError error = deserializeJson(doc, http.getStream());
+         String payload = http.getString();
+         DeserializationError error = deserializeJson(doc, payload);
          http.end();
          if (error) {
-            Serial.printf("deserializeJson() failed: %s", error.c_str());
+            Serial.printf("deserializeJson() failed. %s Code:%s\n", error.c_str(), String(error.code()));
+            Serial.printf("payload: %s\n", payload.c_str());
             return false;
          } else {
             return true;
@@ -86,24 +89,24 @@ protected:
    }
 
 public:
-   Corona()
+   OpenLiga()
    {
    }
 
    /* Start the request and the filling. */
-   bool GetCorona(MyData &myData)
+   bool GetOpenLiga(MyData &myData)
    {
-      DynamicJsonDocument doc(5 * 1024);
+      DynamicJsonDocument doc(2 * 1024);
 
-      if (GetCoronaLocalJsonDoc(doc))
+      if (GetNextMatchJsonDoc(doc))
       {
-         myData.coronaWeekIncidenceLocal = doc.as<JsonObject>()["data"][district]["weekIncidence"].as<float>();
-         myData.coronaName = doc.as<JsonObject>()["data"][district]["name"].as<char *>();
-         myData.coronaUpdated = doc.as<JsonObject>()["meta"]["lastUpdate"].as<char *>();
+         myData.leagueNextTeam1 = doc.as<JsonObject>()["team1"]["teamName"].as<const char *>();
+         myData.leagueNextTeam2 = doc.as<JsonObject>()["team2"]["teamName"].as<const char *>();
+         myData.leagueNextTime = doc.as<JsonObject>()["matchDateTime"].as<const char *>();
       }
-      if (GetCoronaGermanyJsonDoc(doc))
+      if (GetSpieltagJsonDoc(doc))
       {
-         myData.coronaWeekIncidenceGermany = doc.as<JsonObject>()["weekIncidence"].as<float>();
+         myData.leagueSpieltag = doc.as<JsonObject>()["groupName"].as<const char *>();
          return true;
       }
       return false;

@@ -28,8 +28,10 @@
 #define OPENWEATHER_PORT 80
 #define OPENWEATHER_API  "your openweathermap api key"
 
-// Allgemeiner Gemeindeschlüssel. e.g. Bremen 04011
-#define CORONA_AGS       "04011"
+// https://www.openligadb.de/
+#define LEAGUE           "bl1"
+#define LEAGUE_ID        4562   // Bundesliga 22/23
+#define TEAM_ID          134    // SVW
 
 #define GOOGLE_API_KEY   "YOUR_KEY"
 #define WORK_NAME        "Work" 

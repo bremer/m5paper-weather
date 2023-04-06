@@ -41,11 +41,10 @@ public:
 
    int     astronauts;       // astronauts in space
 
-
-   float   coronaWeekIncidenceGermany;  
-   float   coronaWeekIncidenceLocal;  
-   String  coronaName;  
-   String  coronaUpdated;  
+   String  leagueNextTeam1;  // OpenLiga
+   String  leagueNextTeam2;  
+   String  leagueNextTime;  
+   String  leagueSpieltag;  
 
    int  mapsWorkDurationInTraffic;
    int  mapsHomeDurationInTraffic;
@@ -62,8 +61,6 @@ public:
       , sht30Temperatur(0)
       , sht30Humidity(0)
       , astronauts(0)
-      , coronaWeekIncidenceGermany(0)
-      , coronaWeekIncidenceLocal(0)
       , mapsWorkDurationInTraffic(0)
       , mapsHomeDurationInTraffic(0)
       , sleepForMinutes(60)
@@ -84,7 +81,8 @@ public:
       Serial.println("Sht30Humidity: "   + String(sht30Humidity));
       Serial.println("Astronauts: "      + String(astronauts));
 
-      Serial.println("WeekIncidenceHb: " + String(coronaWeekIncidenceLocal));
+      Serial.println("Spieltag: " + String(leagueSpieltag));
+      Serial.println("Match Team1: " + String(leagueNextTeam1));
       
       Serial.println("Duration: "        + mapsWorkDurationInTraffic + String("/") + mapsHomeDurationInTraffic);
       

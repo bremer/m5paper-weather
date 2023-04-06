@@ -212,3 +212,16 @@ String GermanDate(String intDateString)
    }
    return intDateString;
 }
+
+/* Converts yyyy-mm-ddTHH:MM:SS to dd.mm.yyyy HH:MM
+*/
+String GermanDateFromTimestamp(String intDateString)
+{
+   if(intDateString.length() >= 16)
+   {
+      const String separator = ".";
+      return intDateString.substring(8,10) + separator + intDateString.substring(5,7) + separator + intDateString.substring(0,4)
+         + " " + intDateString.substring(11,16);
+   }
+   return intDateString;
+}
