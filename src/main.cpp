@@ -31,7 +31,7 @@
 #include "EPDWifi.h"
 #include "SHT30.h"
 #include "Utils.h"
-#include "Weather.h"
+#include "WeatherCurrent.h"
 #include "Astronaut.h"
 #include "OpenLiga.h"
 #include "Maps.h"

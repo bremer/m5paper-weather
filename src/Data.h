@@ -21,7 +21,7 @@
   */
 #pragma once
 
-#include "Weather.h"
+#include "WeatherCurrent.h"
 #include <nvs.h>
 
 
@@ -49,7 +49,7 @@ public:
    int  mapsWorkDurationInTraffic;
    int  mapsHomeDurationInTraffic;
 
-   Weather weather;          //!< All the openweathermap data
+   WeatherCurrent weather;          //!< current the openweathermap data
 
    int sleepForMinutes;
 
