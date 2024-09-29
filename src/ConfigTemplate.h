@@ -30,7 +30,7 @@
 
 // https://www.openligadb.de/
 #define LEAGUE           "bl1"
-#define LEAGUE_ID        4562   // Bundesliga 22/23
+#define LEAGUE_ID        4741   // Bundesliga 24/25
 #define TEAM_ID          134    // SVW
 
 #define GOOGLE_API_KEY   "YOUR_KEY"
