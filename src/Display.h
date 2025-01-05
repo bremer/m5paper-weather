@@ -20,6 +20,7 @@
   * Main class for drawing the content to the e-paper display.
   */
 #pragma once
+#include <M5EPD.h>
 #include "Data.h"
 #include "Icons.h"
 
@@ -51,8 +52,7 @@ protected:
    void DrawIndoorInfo(int x, int y, int dx, int dy);
    void DrawStatusInfo(int x, int y, int dx, int dy);
 
-   // void DrawDaily(int x, int y, int dx, int dy, Weather &weather, int index);
-   void DrawWeatherGraph(int x, int y, int dx, int dy);
+   void DrawCatfact(int x, int y, int dx, int dy);
 
    void DrawTraffic(int x, int y, int dx, int dy);
    void DrawLeague(int x, int y, int dx, int dy);
@@ -300,12 +300,25 @@ void WeatherDisplay::DrawLeague(int x, int y, int dx, int dy)
    canvas.drawString(myData.leagueNextTeam1 + " - " + myData.leagueNextTeam2, x + 10, y + 45);
 }
 
-void WeatherDisplay::DrawWeatherGraph(int x, int y, int dx, int dy)
+void WeatherDisplay::DrawCatfact(int x, int y, int dx, int dy)
 {
-   rtc_time_t RTCtime;
-   M5.RTC.getTime(&RTCtime);
-   int xMin = RTCtime.hour;
-   int xSteps = 12;
+   int textWith = 35;
+   int lineHeight = 20;
+   int maxLines = 3;
+   int currentLine = 0;
+
+   canvas.setTextSize(2);
+   canvas.drawString("Cat Facts", x + 10, y + 10);
+
+   String catfact = myData.catfact;
+   int catfactLength = catfact.length();
+
+   while (currentLine < maxLines && catfactLength > currentLine * textWith) {
+      String line = catfact.substring(currentLine * textWith, min((currentLine + 1) * textWith, catfactLength));
+      line.trim();
+      canvas.drawString(line, x + 10, y + 50 + lineHeight * currentLine);
+      currentLine++;
+   }
 
    // DrawGraph(x + 15, y + 2, 415, 115, "mm", RIGHT, xMin, xSteps, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
    // DrawGraph(x + 15, y + 2, 415, 115, "mm", RIGHT, xMin, xSteps, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);
@@ -450,7 +463,8 @@ void WeatherDisplay::Show()
       canvas.drawLine(x + 113, 286, x + 113, 408, M5EPD_Canvas::G15);
    }
 
-   DrawWeatherGraph(465, 286, 465, 122);
+   // middle right
+   DrawCatfact(465, 286, 465, 122);
    
    DrawTraffic(15, 408, 465, 122);
    DrawLeague(465, 415, 465, 122);

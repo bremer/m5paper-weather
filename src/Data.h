@@ -46,6 +46,8 @@ public:
    String  leagueNextTime;  
    String  leagueSpieltag;  
 
+   String  catfact;          // Catfact
+
    int  mapsWorkDurationInTraffic;
    int  mapsHomeDurationInTraffic;
 
@@ -84,6 +86,8 @@ public:
       Serial.println("Spieltag: " + String(leagueSpieltag));
       Serial.println("Match Team1: " + String(leagueNextTeam1));
       
+      Serial.println("Cat fact: " + String(catfact));
+
       Serial.println("Duration: "        + mapsWorkDurationInTraffic + String("/") + mapsHomeDurationInTraffic);
       
       Serial.println("Sunrise: "         + getDateTimeString(weather.sunrise));
