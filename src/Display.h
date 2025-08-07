@@ -52,7 +52,7 @@ protected:
    void DrawIndoorInfo(int x, int y, int dx, int dy);
    void DrawStatusInfo(int x, int y, int dx, int dy);
 
-   void DrawCatfact(int x, int y, int dx, int dy);
+   void DrawSolar(int x, int y, int dx, int dy);
 
    void DrawTraffic(int x, int y, int dx, int dy);
    void DrawLeague(int x, int y, int dx, int dy);
@@ -300,25 +300,17 @@ void WeatherDisplay::DrawLeague(int x, int y, int dx, int dy)
    canvas.drawString(myData.leagueNextTeam1 + " - " + myData.leagueNextTeam2, x + 10, y + 45);
 }
 
-void WeatherDisplay::DrawCatfact(int x, int y, int dx, int dy)
+void WeatherDisplay::DrawSolar(int x, int y, int dx, int dy)
 {
-   int textWith = 35;
-   int lineHeight = 20;
-   int maxLines = 3;
-   int currentLine = 0;
-
    canvas.setTextSize(2);
-   canvas.drawString("Cat Facts", x + 10, y + 10);
-
-   String catfact = myData.catfact;
-   int catfactLength = catfact.length();
-
-   while (currentLine < maxLines && catfactLength > currentLine * textWith) {
-      String line = catfact.substring(currentLine * textWith, min((currentLine + 1) * textWith, catfactLength));
-      line.trim();
-      canvas.drawString(line, x + 10, y + 50 + lineHeight * currentLine);
-      currentLine++;
-   }
+   canvas.drawString("Solar", x + 10, y + 10);
+   
+   String solar_power = myData.solar_current_power + " " + myData.solar_current_unit;
+   String solar_production = myData.solar_today_production + " " + myData.solar_today_unit;
+   
+   canvas.setTextSize(3);
+   canvas.drawString(solar_power, x + 30, y + 50);
+   canvas.drawString(solar_production, x + dx/2, y + 50);
 
    // DrawGraph(x + 15, y + 2, 415, 115, "mm", RIGHT, xMin, xSteps, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
    // DrawGraph(x + 15, y + 2, 415, 115, "mm", RIGHT, xMin, xSteps, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);
@@ -464,7 +456,7 @@ void WeatherDisplay::Show()
    }
 
    // middle right
-   DrawCatfact(465, 286, 465, 122);
+   DrawSolar(465, 286, 465, 122);
    
    DrawTraffic(15, 408, 465, 122);
    DrawLeague(465, 415, 465, 122);

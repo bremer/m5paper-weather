@@ -28,6 +28,10 @@
 #define OPENWEATHER_PORT 80
 #define OPENWEATHER_API  "your openweathermap api key"
 
+#define HOMEASSISTANT_SRV  "homeassistant.example.com"
+#define HOMEASSISTANT_PORT 8123
+#define HOMEASSISTANT_API  "your homeassistant api key"
+
 // https://www.openligadb.de/
 #define LEAGUE           "bl1"
 #define LEAGUE_ID        4741   // Bundesliga 24/25

@@ -34,13 +34,13 @@
 #include "WeatherCurrent.h"
 #include "Astronaut.h"
 #include "OpenLiga.h"
-#include "Catfact.h"
+#include "HaSolar.h"
 #include "Maps.h"
 
 MyData         myData;            // The collection of the global data
 Astronaut      astronaut;         // REST client for astonauts
 OpenLiga       openLiga;         // REST client for OpenLiga
-Catfact        catfact;          // REST client for catfact
+HaSolar        hasolar;          // REST client for homassistant solar
 Maps           maps;             // google maps client
 WeatherDisplay myDisplay(myData); // The global display helper class
 
@@ -99,7 +99,7 @@ void setup()
       GetSHT30Values(myData);
       astronaut.GetAstronauts(myData);
       openLiga.GetOpenLiga(myData);
-      catfact.GetCatfact(myData);
+      hasolar.GetSolar(myData);
       maps.GetMaps(myData);
       if (myData.weather.Get()) {
          SetRTCDateTime(myData);

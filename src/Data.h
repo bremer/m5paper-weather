@@ -46,7 +46,10 @@ public:
    String  leagueNextTime;  
    String  leagueSpieltag;  
 
-   String  catfact;          // Catfact
+   String solar_current_unit;          // Solar
+   String solar_current_power;
+   String solar_today_unit;
+   String solar_today_production;
 
    int  mapsWorkDurationInTraffic;
    int  mapsHomeDurationInTraffic;
@@ -86,7 +89,8 @@ public:
       Serial.println("Spieltag: " + String(leagueSpieltag));
       Serial.println("Match Team1: " + String(leagueNextTeam1));
       
-      Serial.println("Cat fact: " + String(catfact));
+      Serial.println("HA solar: " + String(solar_current_power) + " " + solar_current_unit);
+      Serial.println("          " + String(solar_today_production) + " " + solar_today_unit);
 
       Serial.println("Duration: "        + mapsWorkDurationInTraffic + String("/") + mapsHomeDurationInTraffic);
       
