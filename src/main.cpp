@@ -68,25 +68,46 @@ bool SetRTCDateTime(MyData &myData)
    return false;
 }
 
-void getSleepTime(MyData &myData)
-{
+boolean isTimeAfter(int8_t hour, int8_t minute){
    rtc_time_t RTCtime;
    M5.RTC.getTime(&RTCtime);
-   int8_t hour = RTCtime.hour;
-   int8_t minute = RTCtime.min;
-
-   if (!myData.weather.success) {
-      myData.sleepForMinutes = 2;
-   } else if (hour < 5) {
-      // less frequent update between 0:00 and 5:00 
-      myData.sleepForMinutes = min((5 - hour) * 60 - minute, 120);
-   } else {
-      myData.sleepForMinutes = 30;
+   if (RTCtime.hour > hour) {
+      return true;
+   } else if (RTCtime.hour == hour && RTCtime.min >= minute) {
+      return true;
    }
+   return false;
 }
 
-void shutdown(int sleepForMinutes) 
-{   
+boolean isTimeBefore(int8_t hour, int8_t minute){
+   rtc_time_t RTCtime;
+   M5.RTC.getTime(&RTCtime);
+   if (RTCtime.hour < hour) {
+      return true;
+   } else if (RTCtime.hour == hour && RTCtime.min < minute) {
+      return true;
+   }
+   return false;
+}
+
+void getSleepTime(MyData &myData){
+   rtc_time_t RTCtime;
+   M5.RTC.getTime(&RTCtime);
+
+   int sleepForMinutes = 30;
+
+   if (!myData.weather.success) {
+      sleepForMinutes = 2;
+   } else if (isTimeBefore(5, 0) || isTimeAfter(23, 30)) {
+      // less frequent update between 0:00 and 5:00 
+      sleepForMinutes = min((5 - RTCtime.hour) * 60 + (60 - RTCtime.min), 120);
+   }
+
+   sleepForMinutes = max(sleepForMinutes, 2);
+   myData.sleepForMinutes = sleepForMinutes;
+}
+
+void shutdown(int sleepForMinutes) {   
    ShutdownEPD(sleepForMinutes * 60);
 }
 
@@ -97,12 +118,15 @@ void setup()
    if (StartWiFi(myData.wifiRSSI)) {
       GetBatteryValues(myData);
       GetSHT30Values(myData);
+      if (myData.weather.Get()) {
+         SetRTCDateTime(myData);
+      }
+      getSleepTime(myData);
       astronaut.GetAstronauts(myData);
       openLiga.GetOpenLiga(myData);
       hasolar.GetSolar(myData);
-      maps.GetMaps(myData);
-      if (myData.weather.Get()) {
-         SetRTCDateTime(myData);
+      if(isTimeBefore(21, 0) && isTimeAfter(4, 0)) {
+         maps.GetMaps(myData);
       }
 
       getSleepTime(myData);

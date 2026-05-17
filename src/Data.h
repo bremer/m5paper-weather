@@ -54,9 +54,9 @@ public:
    int  mapsWorkDurationInTraffic;
    int  mapsHomeDurationInTraffic;
 
-   WeatherCurrent weather;          //!< current the openweathermap data
+   unsigned int sleepForMinutes;
 
-   int sleepForMinutes;
+   WeatherCurrent weather;          //!< current the openweathermap data
 
 public:
    MyData()
@@ -68,7 +68,7 @@ public:
       , astronauts(0)
       , mapsWorkDurationInTraffic(0)
       , mapsHomeDurationInTraffic(0)
-      , sleepForMinutes(60)
+      , sleepForMinutes(30)
    {
    }
 
