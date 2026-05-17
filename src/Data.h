@@ -47,9 +47,9 @@ public:
    String  leagueSpieltag;  
 
    String solar_current_unit;          // Solar
-   String solar_current_power;
+   int solar_current_power;
    String solar_today_unit;
-   String solar_today_production;
+   float solar_today_production;
 
    int  mapsWorkDurationInTraffic;
    int  mapsHomeDurationInTraffic;

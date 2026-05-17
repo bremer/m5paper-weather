@@ -305,8 +305,8 @@ void WeatherDisplay::DrawSolar(int x, int y, int dx, int dy)
    canvas.setTextSize(2);
    canvas.drawString("Solar", x + 10, y + 10);
    
-   String solar_power = myData.solar_current_power + " " + myData.solar_current_unit;
-   String solar_production = myData.solar_today_production + " " + myData.solar_today_unit;
+   String solar_power = String(myData.solar_current_power) + " " + myData.solar_current_unit;
+   String solar_production = String(myData.solar_today_production, 2) + " " + myData.solar_today_unit;
    
    canvas.setTextSize(3);
    canvas.drawString(solar_power, x + 30, y + 50);
