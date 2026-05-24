@@ -54,6 +54,7 @@ protected:
 
    void DrawSolar(int x, int y, int dx, int dy);
 
+   void DrawWorldCup(int x, int y, int dx, int dy);
    void DrawTraffic(int x, int y, int dx, int dy);
    void DrawLeague(int x, int y, int dx, int dy);
 
@@ -279,8 +280,14 @@ void WeatherDisplay::DrawStatusInfo(int x, int y, int dx, int dy)
 //       DrawIcon(iconX, iconY, (uint16_t *)image_data_unknown, 64, 64, true);
 // }
 
-void WeatherDisplay::DrawTraffic(int x, int y, int dx, int dy)
-{
+void WeatherDisplay::DrawWorldCup(int x, int y, int dx, int dy){
+   canvas.setTextSize(2);
+   canvas.setTextSize(2);
+   canvas.drawCentreString("For Rent", x + dx / 2, y + 10, 1);
+
+}
+
+void WeatherDisplay::DrawTraffic(int x, int y, int dx, int dy){
    canvas.setTextSize(2);
    canvas.setTextSize(2);
    canvas.drawCentreString("Fahrzeit", x + dx / 2, y + 10, 1);
@@ -302,15 +309,15 @@ void WeatherDisplay::DrawLeague(int x, int y, int dx, int dy)
 
 void WeatherDisplay::DrawSolar(int x, int y, int dx, int dy)
 {
-   canvas.setTextSize(2);
-   canvas.drawString("Solar", x + 10, y + 10);
+   canvas.setTextSize(3);
+   canvas.drawString("Solar", x + dx / 2 - 30, y + 10, 1);
    
    String solar_power = String(myData.solar_current_power) + " " + myData.solar_current_unit;
    String solar_production = String(myData.solar_today_production, 2) + " " + myData.solar_today_unit;
    
-   canvas.setTextSize(3);
-   canvas.drawString(solar_power, x + 30, y + 50);
-   canvas.drawString(solar_production, x + dx/2, y + 50);
+   canvas.setTextSize(4);
+   canvas.drawString(solar_power, x + 30, y + 60);
+   canvas.drawString(solar_production, x + dx/2, y + 60);
 
    // DrawGraph(x + 15, y + 2, 415, 115, "mm", RIGHT, xMin, xSteps, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
    // DrawGraph(x + 15, y + 2, 415, 115, "mm", RIGHT, xMin, xSteps, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);
@@ -448,15 +455,11 @@ void WeatherDisplay::Show()
 
    // middle bottom left
    canvas.drawRect(15, 286, maxX - 30, 122, M5EPD_Canvas::G15);
-   for (int x = 13, i = 0; i < 4; x += 113, i += 1)
-   {
-      // canvas.drawLine(x, 286, x, 408, M5EPD_Canvas::G15);
-      // DrawDaily(x, 286, 113, 122, myData.weather, i);
-      canvas.drawLine(x + 113, 286, x + 113, 408, M5EPD_Canvas::G15);
-   }
-
+   canvas.drawLine(465, 286, 465, 408, M5EPD_Canvas::G15);
+   
    // middle right
-   DrawSolar(465, 286, 465, 122);
+   DrawSolar(15, 286, 465, 122);
+   DrawWorldCup(465, 286, 465, 122);
    
    DrawTraffic(15, 408, 465, 122);
    DrawLeague(465, 415, 465, 122);
