@@ -33,19 +33,20 @@
 #include "Utils.h"
 #include "WeatherCurrent.h"
 #include "Astronaut.h"
-#include "OpenLiga.h"
+#include "OpenLigaLeague.h"
+#include "OpenLigaWorldcup.h"
 #include "HaSolar.h"
 #include "Maps.h"
 
 MyData         myData;            // The collection of the global data
 Astronaut      astronaut;         // REST client for astonauts
-OpenLiga       openLiga;         // REST client for OpenLiga
+OpenLigaLeague openLigaLeague;   // REST client for OpenLiga
+OpenLigaWorldcup openLigaWorldcup; // REST client for OpenLiga
 HaSolar        hasolar;          // REST client for homassistant solar
 Maps           maps;             // google maps client
 WeatherDisplay myDisplay(myData); // The global display helper class
 
-bool SetRTCDateTime(MyData &myData)
-{
+bool SetRTCDateTime(MyData &myData) {
    time_t time = myData.weather.currentTime;
 
    if (time > 0) {
@@ -123,7 +124,8 @@ void setup()
       }
       getSleepTime(myData);
       astronaut.GetAstronauts(myData);
-      openLiga.GetOpenLiga(myData);
+      openLigaLeague.GetOpenLiga(myData);
+      openLigaWorldcup.GetOpenLiga(myData);
       hasolar.GetSolar(myData);
       if(isTimeBefore(21, 0) && isTimeAfter(4, 0)) {
          maps.GetMaps(myData);

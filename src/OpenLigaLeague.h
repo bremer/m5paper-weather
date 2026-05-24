@@ -15,7 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
-  * @file OpenLiga.h
+  * @file OpenLigaLeague.h
   * 
   * Class for reading Soccer data.
   */
@@ -25,15 +25,13 @@
 #include "Data.h"
 #include <Config.h>
 
-class OpenLiga
-{
+class OpenLigaLeague {
 protected:
    const String server = "https://api.openligadb.de";
    const String pathNextMatch = "/getnextmatchbyleagueteam/" + String(LEAGUE_ID) + "/" + String(TEAM_ID);
    const String pathSpieltag = "/getcurrentgroup/" + String(LEAGUE);
 
-   bool GetNextMatchJsonDoc(DynamicJsonDocument &doc)
-   {
+   bool GetNextMatchJsonDoc(DynamicJsonDocument &doc) {
       HTTPClient http;
 
       String uri = server + pathNextMatch;
@@ -60,8 +58,7 @@ protected:
 
    }
 
-   bool GetSpieltagJsonDoc(DynamicJsonDocument &doc)
-   {
+   bool GetSpieltagJsonDoc(DynamicJsonDocument &doc) {
       HTTPClient http;
 
       String uri = server + pathSpieltag;
@@ -89,17 +86,14 @@ protected:
    }
 
 public:
-   OpenLiga()
-   {
+   OpenLigaLeague() {
    }
 
    /* Start the request and the filling. */
-   bool GetOpenLiga(MyData &myData)
-   {
+   bool GetOpenLiga(MyData &myData) {
       DynamicJsonDocument doc(2 * 1024);
 
-      if (GetNextMatchJsonDoc(doc))
-      {
+      if (GetNextMatchJsonDoc(doc)) {
          myData.leagueNextTeam1 = doc.as<JsonObject>()["team1"]["teamName"].as<const char *>();
          myData.leagueNextTeam2 = doc.as<JsonObject>()["team2"]["teamName"].as<const char *>();
          myData.leagueNextTime = doc.as<JsonObject>()["matchDateTime"].as<const char *>();

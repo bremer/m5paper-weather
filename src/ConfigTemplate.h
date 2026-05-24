@@ -37,6 +37,9 @@
 #define LEAGUE_ID        4741   // Bundesliga 24/25
 #define TEAM_ID          134    // SVW
 
+#define WORLDCUP_LEAGUE_ID 4923 // WM 2026
+#define WORLDCUP_TEAM_ID   725  // Deutschland
+
 #define GOOGLE_API_KEY   "YOUR_KEY"
 #define WORK_NAME        "Work" 
 #define WORK_COORD       "50.123456,9.123456" 

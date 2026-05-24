@@ -281,10 +281,14 @@ void WeatherDisplay::DrawStatusInfo(int x, int y, int dx, int dy)
 // }
 
 void WeatherDisplay::DrawWorldCup(int x, int y, int dx, int dy){
+   canvas.setTextSize(3);
+   canvas.drawCentreString("WM 2026", x + dx/2 , y + 5, 1);
+   
    canvas.setTextSize(2);
-   canvas.setTextSize(2);
-   canvas.drawCentreString("For Rent", x + dx / 2, y + 10, 1);
-
+   canvas.drawString(GermanDateFromTimestamp(myData.worldcupNextTime) + " Uhr", x + 10, y + 40, 1);
+   
+   canvas.setTextSize(3);
+   canvas.drawString(myData.worldcupNextTeam1 + " - " + myData.worldcupNextTeam2, x + 10, y + 65);
 }
 
 void WeatherDisplay::DrawTraffic(int x, int y, int dx, int dy){
@@ -298,8 +302,7 @@ void WeatherDisplay::DrawTraffic(int x, int y, int dx, int dy){
    canvas.drawRightString(String(myData.mapsHomeDurationInTraffic), x + dx - 165, y + 80, 1);
 }
 
-void WeatherDisplay::DrawLeague(int x, int y, int dx, int dy)
-{
+void WeatherDisplay::DrawLeague(int x, int y, int dx, int dy) {
    canvas.setTextSize(2);
    canvas.drawString(myData.leagueSpieltag, x + 10, y + 5, 1);
    canvas.drawRightString(GermanDateFromTimestamp(myData.leagueNextTime) + " Uhr", x + dx - 10, y + 5, 1);
@@ -307,10 +310,9 @@ void WeatherDisplay::DrawLeague(int x, int y, int dx, int dy)
    canvas.drawString(myData.leagueNextTeam1 + " - " + myData.leagueNextTeam2, x + 10, y + 45);
 }
 
-void WeatherDisplay::DrawSolar(int x, int y, int dx, int dy)
-{
+void WeatherDisplay::DrawSolar(int x, int y, int dx, int dy) {
    canvas.setTextSize(3);
-   canvas.drawString("Solar", x + dx / 2 - 30, y + 10, 1);
+   canvas.drawCentreString("Solar", x + dx/2, y + 5, 1);
    
    String solar_power = String(myData.solar_current_power) + " " + myData.solar_current_unit;
    String solar_production = String(myData.solar_today_production, 2) + " " + myData.solar_today_unit;
@@ -325,8 +327,7 @@ void WeatherDisplay::DrawSolar(int x, int y, int dx, int dy)
 }
 
 /* Draw a graph with x- and y-axis and values */
-void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, boolean titleRight, int xMin, int xSteps, int yMin, int yMax, float values[])
-{
+void WeatherDisplay::DrawGraph(int x, int y, int dx, int dy, String title, boolean titleRight, int xMin, int xSteps, int yMin, int yMax, float values[]) {
    int textWidth = 12;
    int graphX = x + textWidth + 20;
    int graphY = y + 10;
