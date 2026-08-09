@@ -39,7 +39,8 @@
 
 MyData         myData;            // The collection of the global data
 Astronaut      astronaut;         // REST client for astonauts
-OpenLigaLeague openLigaLeague(LEAGUE_M_ID, TEAM_M_ID, String(LEAGUE_M));   // REST client for OpenLiga
+OpenLigaLeague openLigaLeagueM(LEAGUE_M_ID, TEAM_M_ID, String(LEAGUE_M));   // REST client for OpenLiga
+OpenLigaLeague openLigaLeagueF(LEAGUE_F_ID, TEAM_F_ID, String(LEAGUE_F));   // REST client for OpenLiga
 HaSolar        hasolar;          // REST client for homassistant solar
 Maps           maps;             // google maps client
 WeatherDisplay myDisplay(myData); // The global display helper class
@@ -122,7 +123,8 @@ void setup()
       }
       getSleepTime(myData);
       astronaut.GetAstronauts(myData);
-      openLigaLeague.GetOpenLiga(myData);
+      openLigaLeagueM.GetOpenLiga(myData.leagueM);
+      openLigaLeagueF.GetOpenLiga(myData.leagueF);
       hasolar.GetSolar(myData);
       if(isTimeBefore(21, 0) && isTimeAfter(4, 0)) {
          maps.GetMaps(myData);

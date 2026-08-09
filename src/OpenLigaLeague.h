@@ -100,17 +100,17 @@ public:
    }
 
    /* Start the request and the filling. */
-   bool GetOpenLiga(MyData &myData) {
+   bool GetOpenLiga(LeagueData &data) {
       DynamicJsonDocument doc(2 * 1024);
 
       if (GetNextMatchJsonDoc(doc)) {
-         myData.leagueNextTeam1 = doc.as<JsonObject>()["team1"]["teamName"].as<const char *>();
-         myData.leagueNextTeam2 = doc.as<JsonObject>()["team2"]["teamName"].as<const char *>();
-         myData.leagueNextTime = doc.as<JsonObject>()["matchDateTime"].as<const char *>();
+         data.leagueNextTeam1 = doc.as<JsonObject>()["team1"]["teamName"].as<const char *>();
+         data.leagueNextTeam2 = doc.as<JsonObject>()["team2"]["teamName"].as<const char *>();
+         data.leagueNextTime = doc.as<JsonObject>()["matchDateTime"].as<const char *>();
       }
       if (GetSpieltagJsonDoc(doc))
       {
-         myData.leagueSpieltag = doc.as<JsonObject>()["groupName"].as<const char *>();
+         data.leagueSpieltag = doc.as<JsonObject>()["groupName"].as<const char *>();
          return true;
       }
       return false;

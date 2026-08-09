@@ -22,6 +22,7 @@
 #pragma once
 
 #include "WeatherCurrent.h"
+#include "LeagueData.h"
 #include <nvs.h>
 
 
@@ -41,11 +42,9 @@ public:
 
    int     astronauts;       // astronauts in space
 
-   String  leagueNextTeam1;  // OpenLiga
-   String  leagueNextTeam2;  
-   String  leagueNextTime;  
-   String  leagueSpieltag;  
-
+   LeagueData leagueM;        // OpenLiga
+   LeagueData leagueF;        // OpenLiga
+   
    String solar_current_unit;          // Solar
    int solar_current_power;
    String solar_today_unit;
@@ -85,9 +84,6 @@ public:
       Serial.println("Sht30Temperatur: " + String(sht30Temperatur));
       Serial.println("Sht30Humidity: "   + String(sht30Humidity));
       Serial.println("Astronauts: "      + String(astronauts));
-
-      Serial.println("Spieltag: " + String(leagueSpieltag));
-      Serial.println("Match Team1: " + String(leagueNextTeam1));
       
       Serial.println("HA solar: " + String(solar_current_power) + " " + solar_current_unit);
       Serial.println("          " + String(solar_today_production) + " " + solar_today_unit);

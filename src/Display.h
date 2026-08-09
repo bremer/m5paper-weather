@@ -54,9 +54,10 @@ protected:
 
    void DrawSolar(int x, int y, int dx, int dy);
 
-   void DrawWorldCup(int x, int y, int dx, int dy);
    void DrawTraffic(int x, int y, int dx, int dy);
-   void DrawLeague(int x, int y, int dx, int dy);
+   void DrawLeague(LeagueData data, String title, int x, int y, int dx, int dy);
+
+   String shortenTeamname(const String &team2);
 
    void DrawGraph(int x, int y, int dx, int dy, String title, boolean titleRight, int xMin, int xMax, int yMin, int yMax, float values[]);
 
@@ -280,11 +281,6 @@ void WeatherDisplay::DrawStatusInfo(int x, int y, int dx, int dy)
 //       DrawIcon(iconX, iconY, (uint16_t *)image_data_unknown, 64, 64, true);
 // }
 
-void WeatherDisplay::DrawWorldCup(int x, int y, int dx, int dy){
-   canvas.setTextSize(3);
-   canvas.drawCentreString("For Sale", x + dx/2 , y + 5, 1);
-}
-
 void WeatherDisplay::DrawTraffic(int x, int y, int dx, int dy){
    canvas.setTextSize(2);
    canvas.setTextSize(2);
@@ -296,12 +292,39 @@ void WeatherDisplay::DrawTraffic(int x, int y, int dx, int dy){
    canvas.drawRightString(String(myData.mapsHomeDurationInTraffic), x + dx - 165, y + 80, 1);
 }
 
-void WeatherDisplay::DrawLeague(int x, int y, int dx, int dy) {
-   canvas.setTextSize(2);
-   canvas.drawString(myData.leagueSpieltag, x + 10, y + 5, 1);
-   canvas.drawRightString(GermanDateFromTimestamp(myData.leagueNextTime) + " Uhr", x + dx - 10, y + 5, 1);
+String replace(const String &original, const String &from, const String &to) {
+    if (from.length() == 0) return original;
+    String result;
+    int start = 0;
+    int idx = original.indexOf(from, start);
+    while (idx != -1) {
+        result += original.substring(start, idx);
+        result += to;
+        start = idx + from.length();
+        idx = original.indexOf(from, start);
+    }
+    result += original.substring(start);
+    return result;
+}
 
-   canvas.drawString(myData.leagueNextTeam1 + " - " + myData.leagueNextTeam2, x + 10, y + 45);
+void WeatherDisplay::DrawLeague(LeagueData data, String title, int x, int y, int dx, int dy) {
+   String team1 = shortenTeamname(replace(data.leagueNextTeam1, " Frauen", ""));
+   String team2 = shortenTeamname(replace(data.leagueNextTeam2, " Frauen", ""));
+   
+   canvas.setTextSize(3);
+   canvas.drawString(title, x + 10, y + 5, 1);
+   canvas.setTextSize(2);
+   canvas.drawString(data.leagueSpieltag, x + 10, y + 50, 1);
+   canvas.drawRightString(GermanDateFromTimestamp(data.leagueNextTime) + " Uhr", x + dx - 10, y + 50, 1);
+
+   canvas.drawString(team1 + " - " + team2, x + 10, y + 80);
+}
+
+String WeatherDisplay::shortenTeamname(const String &team){
+   if (team.equalsIgnoreCase("SV Werder Bremen")){
+      return "SVW";
+   }
+   return team;
 }
 
 void WeatherDisplay::DrawSolar(int x, int y, int dx, int dy) {
@@ -454,10 +477,10 @@ void WeatherDisplay::Show()
    
    // middle right
    DrawSolar(15, 286, 465, 122);
-   DrawWorldCup(465, 286, 465, 122);
+   DrawLeague(myData.leagueF, "Werder F", 465, 286, 465, 122);
    
    DrawTraffic(15, 408, 465, 122);
-   DrawLeague(465, 415, 465, 122);
+   DrawLeague(myData.leagueM, "Werder M", 465, 415, 465, 122);
    // bottom
    
    canvas.drawRect(15, 408, maxX - 30, 122, M5EPD_Canvas::G15);
