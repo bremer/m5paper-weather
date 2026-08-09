@@ -282,13 +282,7 @@ void WeatherDisplay::DrawStatusInfo(int x, int y, int dx, int dy)
 
 void WeatherDisplay::DrawWorldCup(int x, int y, int dx, int dy){
    canvas.setTextSize(3);
-   canvas.drawCentreString("WM 2026", x + dx/2 , y + 5, 1);
-   
-   canvas.setTextSize(2);
-   canvas.drawString(GermanDateFromTimestamp(myData.worldcupNextTime) + " Uhr", x + 10, y + 40, 1);
-   
-   canvas.setTextSize(3);
-   canvas.drawString(myData.worldcupNextTeam1 + " - " + myData.worldcupNextTeam2, x + 10, y + 65);
+   canvas.drawCentreString("For Sale", x + dx/2 , y + 5, 1);
 }
 
 void WeatherDisplay::DrawTraffic(int x, int y, int dx, int dy){

@@ -46,10 +46,6 @@ public:
    String  leagueNextTime;  
    String  leagueSpieltag;  
 
-   String  worldcupNextTeam1;  // OpenLiga
-   String  worldcupNextTeam2;  
-   String  worldcupNextTime;  
-
    String solar_current_unit;          // Solar
    int solar_current_power;
    String solar_today_unit;

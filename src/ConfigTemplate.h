@@ -33,9 +33,13 @@
 #define HOMEASSISTANT_API  "your homeassistant api key"
 
 // https://www.openligadb.de/
-#define LEAGUE           "bl1"
-#define LEAGUE_ID        4741   // Bundesliga 24/25
-#define TEAM_ID          134    // SVW
+#define LEAGUE_M           "bl1"  // male
+#define LEAGUE_M_ID        4937   // Bundesliga Maenner 26/27
+#define TEAM_M_ID          134    // SVW male
+
+#define LEAGUE_F           "ffb1"  // female
+#define LEAGUE_F_ID        5972   // Bundesliga Frauen 26/27
+#define TEAM_F_ID          6067   // SVW female
 
 #define WORLDCUP_LEAGUE_ID 4923 // WM 2026
 #define WORLDCUP_TEAM_ID   725  // Deutschland

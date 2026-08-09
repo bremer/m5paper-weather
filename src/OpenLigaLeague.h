@@ -28,8 +28,18 @@
 class OpenLigaLeague {
 protected:
    const String server = "https://api.openligadb.de";
-   const String pathNextMatch = "/getnextmatchbyleagueteam/" + String(LEAGUE_ID) + "/" + String(TEAM_ID);
-   const String pathSpieltag = "/getcurrentgroup/" + String(LEAGUE);
+   int leagueId;
+   int teamId;
+   String league;
+   String pathNextMatch;
+   String pathSpieltag;
+
+public:
+   OpenLigaLeague(int leagueId, int teamId, const String &league)
+      : leagueId(leagueId), teamId(teamId), league(league),
+        pathNextMatch("/getnextmatchbyleagueteam/" + String(leagueId) + "/" + String(teamId)),
+        pathSpieltag("/getcurrentgroup/" + league) {
+   }
 
    bool GetNextMatchJsonDoc(DynamicJsonDocument &doc) {
       HTTPClient http;
@@ -86,7 +96,7 @@ protected:
    }
 
 public:
-   OpenLigaLeague() {
+   OpenLigaLeague() : OpenLigaLeague(LEAGUE_M_ID, TEAM_M_ID, String(LEAGUE_M)) {
    }
 
    /* Start the request and the filling. */
