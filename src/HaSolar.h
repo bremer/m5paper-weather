@@ -130,19 +130,24 @@ public:
    bool GetSolar(MyData &myData)
    {
       DynamicJsonDocument doc(2 * 512);
+      bool currentSuccess = false;
+      bool todaySuccess = false;
    
-      if (GetSolarCurrentJsonDoc(doc))
+      currentSuccess = GetSolarCurrentJsonDoc(doc);
+      if (currentSuccess)
       {
          myData.solar_current_power = doc.as<JsonObject>()["state"].as<int>();
          myData.solar_current_unit = doc.as<JsonObject>()["attributes"]["unit_of_measurement"].as<String>();
       }
-      if (GetSolarTodayJsonDoc(doc))
+      
+      todaySuccess = GetSolarTodayJsonDoc(doc);
+      if (todaySuccess)
       {
          myData.solar_today_production = doc.as<JsonObject>()["state"].as<float>();
          myData.solar_today_unit = doc.as<JsonObject>()["attributes"]["unit_of_measurement"].as<String>();
-         return true;
       }
-
-      return false;
+      
+      myData.solar_success = (currentSuccess && todaySuccess);
+      return myData.solar_success;
    }
 };

@@ -331,12 +331,21 @@ void WeatherDisplay::DrawSolar(int x, int y, int dx, int dy) {
    canvas.setTextSize(3);
    canvas.drawCentreString("Solar", x + dx/2, y + 5, 1);
    
-   String solar_power = String(myData.solar_current_power) + " " + myData.solar_current_unit;
-   String solar_production = String(myData.solar_today_production, 2) + " " + myData.solar_today_unit;
-   
    canvas.setTextSize(4);
-   canvas.drawString(solar_power, x + 30, y + 60);
-   canvas.drawString(solar_production, x + dx/2, y + 60);
+   
+   if (!myData.solar_success) {
+      canvas.drawString("HA nicht erreichbar", x + 30, y + 60);
+   } else {
+      String current_unit = myData.solar_current_unit;
+      if (current_unit == "null") current_unit = "W";
+      String today_unit = myData.solar_today_unit;
+      if (today_unit == "null") today_unit = "kWh";
+      
+      String solar_power = String(myData.solar_current_power) + " " + current_unit;
+      String solar_production = String(myData.solar_today_production, 2) + " " + today_unit;
+      canvas.drawString(solar_power, x + 30, y + 60);
+      canvas.drawString(solar_production, x + dx/2, y + 60);
+   }
 
    // DrawGraph(x + 15, y + 2, 415, 115, "mm", RIGHT, xMin, xSteps, 0, myData.weather.maxRain, myData.weather.forecastHourlyRain);
    // DrawGraph(x + 15, y + 2, 415, 115, "mm", RIGHT, xMin, xSteps, 0, myData.weather.maxRain, myData.weather.forecastHourlySnow);

@@ -45,6 +45,7 @@ public:
    LeagueData leagueM;        // OpenLiga
    LeagueData leagueF;        // OpenLiga
    
+   bool solar_success;          // Solar API success flag
    String solar_current_unit;          // Solar
    int solar_current_power;
    String solar_today_unit;
