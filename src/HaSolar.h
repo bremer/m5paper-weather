@@ -25,6 +25,7 @@
 #include <ArduinoJson.h>
 #include "Utils.h"
 #include "Config.h"
+#include "Logging.h"
 
 class HaSolar
 {
@@ -44,7 +45,8 @@ protected:
       
       uri += "/api/states/sensor.solar_leistung_statistik";
 
-      Serial.printf("Requesting %s to %s:%d\n", uri.c_str(), HOMEASSISTANT_SRV, HOMEASSISTANT_PORT);
+      String url = String(HOMEASSISTANT_SRV) + ":" + String(HOMEASSISTANT_PORT) + uri;
+      LOG_HTTP_REQUEST(url);
 
       client.stop();
       
@@ -52,12 +54,12 @@ protected:
       http.addHeader("Authorization", "Bearer " + String(HOMEASSISTANT_API));
       http.addHeader("Content-Type", "application/json");
       int httpCode = http.GET();
+      LOG_HTTP_RESPONSE_CODE(httpCode);
       
-      Serial.printf("Read %d bytes\n", http.getSize());
+      LOG_HTTP_BYTES(http.getSize());
 
       if (httpCode != HTTP_CODE_OK) {
-         Serial.printf("GetSolar failed, HTTP-Code: %s\n", http.errorToString(httpCode).c_str());
-         Serial.printf("Body: %s\n", http.getString().c_str());
+         LOG_HTTP_ERROR(uri, httpCode, http);
          client.stop();
          http.end();
          return false;
@@ -65,8 +67,7 @@ protected:
          DeserializationError error = deserializeJson(doc, http.getStream());
          
          if (error) {
-            Serial.print(F("deserializeJson() failed: "));
-            Serial.println(error.c_str());
+            LOG_JSON_ERROR(error, http.getString());
             return false;
          } else {
             return true;
@@ -82,7 +83,8 @@ protected:
       
       uri += "/api/states/sensor.solar_heutige_erzeugung";
 
-      Serial.printf("Requesting %s to %s:%d\n", uri.c_str(), HOMEASSISTANT_SRV, HOMEASSISTANT_PORT);
+      String url = String(HOMEASSISTANT_SRV) + ":" + String(HOMEASSISTANT_PORT) + uri;
+      LOG_HTTP_REQUEST(url);
 
       client.stop();
       
@@ -90,12 +92,12 @@ protected:
       http.addHeader("Authorization", "Bearer " + String(HOMEASSISTANT_API));
       http.addHeader("Content-Type", "application/json");
       int httpCode = http.GET();
+      LOG_HTTP_RESPONSE_CODE(httpCode);
       
-      Serial.printf("Read %d bytes\n", http.getSize());
+      LOG_HTTP_BYTES(http.getSize());
 
       if (httpCode != HTTP_CODE_OK) {
-         Serial.printf("GetSolar failed, HTTP-Code: %s\n", http.errorToString(httpCode).c_str());
-         Serial.printf("Body: %s\n", http.getString().c_str());
+         LOG_HTTP_ERROR(uri, httpCode, http);
          client.stop();
          http.end();
          return false;
@@ -103,8 +105,7 @@ protected:
          DeserializationError error = deserializeJson(doc, http.getStream());
          
          if (error) {
-            Serial.print(F("deserializeJson() failed: "));
-            Serial.println(error.c_str());
+            LOG_JSON_ERROR(error, http.getString());
             return false;
          } else {
             return true;

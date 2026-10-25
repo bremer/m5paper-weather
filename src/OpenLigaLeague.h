@@ -24,6 +24,7 @@
 #include <ArduinoJson.h>
 #include "Data.h"
 #include <Config.h>
+#include "Logging.h"
 
 class OpenLigaLeague {
 protected:
@@ -45,12 +46,13 @@ public:
       HTTPClient http;
 
       String uri = server + pathNextMatch;
-      Serial.printf("Requesting %s\n", uri.c_str());
+      LOG_HTTP_REQUEST(uri);
       http.begin(uri);
       int httpCode = http.GET();
+      LOG_HTTP_RESPONSE_CODE(httpCode);
 
       if (httpCode != HTTP_CODE_OK) {
-         Serial.printf("Error on requesting %s: %s\n", uri.c_str(), http.errorToString(httpCode).c_str());
+         LOG_HTTP_ERROR(uri, httpCode, http);
          http.end();
          return false;
       } else {
@@ -58,8 +60,7 @@ public:
          DeserializationError error = deserializeJson(doc, payload);
          http.end();
          if (error) {
-            Serial.printf("deserializeJson() failed. %s Code:%s\n", error.c_str(), String(error.code()));
-            Serial.printf("payload: %s\n", payload.c_str());
+            LOG_JSON_ERROR(error, payload);
             return false;
          } else {
             return true;
@@ -72,12 +73,13 @@ public:
       HTTPClient http;
 
       String uri = server + pathSpieltag;
-      Serial.printf("Requesting %s\n", uri.c_str());
+      LOG_HTTP_REQUEST(uri);
       http.begin(uri);
       int httpCode = http.GET();
+      LOG_HTTP_RESPONSE_CODE(httpCode);
 
       if (httpCode != HTTP_CODE_OK) {
-         Serial.printf("Error on requesting %s: %s\n", uri.c_str(), http.errorToString(httpCode).c_str());
+         LOG_HTTP_ERROR(uri, httpCode, http);
          http.end();
          return false;
       } else {
@@ -85,8 +87,7 @@ public:
          DeserializationError error = deserializeJson(doc, payload);
          http.end();
          if (error) {
-            Serial.printf("deserializeJson() failed. %s Code:%s\n", error.c_str(), String(error.code()));
-            Serial.printf("payload: %s\n", payload.c_str());
+            LOG_JSON_ERROR(error, payload);
             return false;
          } else {
             return true;

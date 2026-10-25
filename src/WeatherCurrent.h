@@ -24,6 +24,7 @@
 #include <WiFiClient.h>
 #include <ArduinoJson.h>
 #include "Utils.h"
+#include "Logging.h"
 
 /**
   * Class for reading all the weather data from openweathermap.
@@ -65,17 +66,19 @@ protected:
       uri += "&units=metric&lang=de";
       uri += "&appid=" + (String) OPENWEATHER_API;
 
-      Serial.printf("Requesting %s to %s:%d\n", uri.c_str(), OPENWEATHER_SRV, OPENWEATHER_PORT);
+      String url = String(OPENWEATHER_SRV) + ":" + String(OPENWEATHER_PORT) + uri;
+      LOG_HTTP_REQUEST(url);
 
       client.stop();
       http.begin(client, OPENWEATHER_SRV, OPENWEATHER_PORT, uri);
       
       int httpCode = http.GET();
+      LOG_HTTP_RESPONSE_CODE(httpCode);
       
-      Serial.printf("Read %d bytes\n", http.getSize());
+      LOG_HTTP_BYTES(http.getSize());
 
       if (httpCode != HTTP_CODE_OK) {
-         Serial.printf("GetWeather failed, error: %s", http.errorToString(httpCode).c_str());
+         LOG_HTTP_ERROR(uri, httpCode, http);
          client.stop();
          http.end();
          return false;
@@ -83,8 +86,7 @@ protected:
          DeserializationError error = deserializeJson(doc, http.getStream());
          
          if (error) {
-            Serial.print(F("deserializeJson() failed: "));
-            Serial.println(error.c_str());
+            LOG_JSON_ERROR(error, http.getString());
             return false;
          } else {
             return true;

@@ -24,6 +24,7 @@
 #include <WiFiClient.h>
 #include <ArduinoJson.h>
 #include "Data.h"
+#include "Logging.h"
 
 class Astronaut
 {
@@ -43,17 +44,19 @@ protected:
       port = 80;
       uri += "/astros.json";
 
-      Serial.printf("Requesting %s to %s\n", uri.c_str(), server.c_str());
+      String url = server + ":" + String(port) + uri;
+      LOG_HTTP_REQUEST(url);
 
       client.stop();
       http.begin(client, server, port, uri);
       
       int httpCode = http.GET();
+      LOG_HTTP_RESPONSE_CODE(httpCode);
       
-      Serial.printf("Read %d bytes\n", http.getSize());
+      LOG_HTTP_BYTES(http.getSize());
 
       if (httpCode != HTTP_CODE_OK) {
-         Serial.printf("GetAstronaut failed, error: %s", http.errorToString(httpCode).c_str());
+         LOG_HTTP_ERROR(uri, httpCode, http);
          client.stop();
          http.end();
          return false;
@@ -61,8 +64,7 @@ protected:
          DeserializationError error = deserializeJson(doc, http.getStream());
          
          if (error) {
-            Serial.print(F("deserializeJson() failed: "));
-            Serial.println(error.c_str());
+            LOG_JSON_ERROR(error, http.getString());
             return false;
          } else {
             return true;
